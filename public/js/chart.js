@@ -13,8 +13,8 @@ class Chart{
 
     this.title = {
       title: 'Chart Title',
-      fontSize: '50px',
-      fontColour: 'red'
+      fontSize: 'large',
+      fontColour: 'rgb(10,100,190)'
     };
   }
 
@@ -26,6 +26,10 @@ class Chart{
     this.title.title = title.title;
     this.title.fontSize = title.fontSize;
     this.title.fontColour = title.fontColour;
+  }
+
+  setTitleColour(value){
+    this.title.fontColour = value;
   }
 }
 

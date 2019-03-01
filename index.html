@@ -3,6 +3,7 @@
 <head>
   <!-- CSS -->
   <link rel="stylesheet" type="text/css" href="./public/css/style.css">
+  <link rel="stylesheet" type="text/css" href="./public/css/colour.css">
 
   <!-- JS -->
   <script
@@ -44,6 +45,7 @@
               <div class="form-group">
                 <label>Font Size</label>
                 <input id="title_font_size" class="form-control" type="text" placeholder="50" required="true">
+                <!-- dropbox with the UoM of the font size -->
                 <select id="select_title_font_size"></select>
               </div>
             </form>
@@ -51,7 +53,8 @@
             <form class="form-inline">
               <div class="form-group">
                 <label>Font Colour</label>
-                <input id="title_font_colour" class="form-control" type="text" placeholder="Font size" required="true">
+                <div id="title_font_colour" class="colour-div">
+                </div>
                 <a style="margin-bottom:10px" class="btn btn-primary" id="btn_change_chart_title_colour">Change</a>
               </div>
             </form>
