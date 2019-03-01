@@ -1,3 +1,4 @@
 module.exports = {
-    'extends': 'lighthouselabs',
+    extends: 'lighthouselabs',
+    env: { es6: true, browser: true },
 };

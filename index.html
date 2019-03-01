@@ -1,15 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <!-- CSS -->
   <link rel="stylesheet" type="text/css" href="./public/css/style.css">
+
+  <!-- JS -->
   <script
   src="https://code.jquery.com/jquery-3.3.1.slim.js"
   integrity="sha256-fNXJFIlca05BIO2Y5zh1xrShK3ME+/lYZ0j+ChxX2DA="
   crossorigin="anonymous"></script>
+  <script type="text/javascript" src="./public/js/chart.js"></script>
+  <script type="text/javascript" src="./public/js/colour-picker.js"></script>
   <script type="text/javascript" src="./public/js/script.js"></script>
-  <title>Main Page</title>
+
+  <title>Bar Chart</title>
 </head>
 <body>
-  <h1>Main page</h1>
+  <a style="margin-bottom:10px" class="btn btn-primary" id="btn_chart_settings">Chart Settings</a>
+  <hr>
+  <h1>Bar Chart</h1>
+
+
+
+  <!-- Begin of Chart settings popup -->
+  <div id="popup_chart_settings" class="popupModal">
+    <div class="popupBoxWrapper">
+      <div class="popupBoxContent">
+        <h3>Chart Settings</h3>
+        <hr class="hr-style">
+
+        <div class="settings-box">
+          <!-- Begin of Chart title's settings -->
+          <h4>Title Settings:</h4>
+          <div id="title_chart_settings">
+            <form class="form-inline">
+              <div class="form-group">
+                <label>Title</label>
+                <input id="title_chart" class="form-control" type="text" placeholder="Bar Chart" required="true">
+              </div>
+            </form>
+
+            <form class="form-inline">
+              <div class="form-group">
+                <label>Font Size</label>
+                <input id="title_font_size" class="form-control" type="text" placeholder="50" required="true">
+                <select id="select_title_font_size"></select>
+              </div>
+            </form>
+
+            <form class="form-inline">
+              <div class="form-group">
+                <label>Font Colour</label>
+                <input id="title_font_colour" class="form-control" type="text" placeholder="Font size" required="true">
+                <a style="margin-bottom:10px" class="btn btn-primary" id="btn_change_chart_title_colour">Change</a>
+              </div>
+            </form>
+          </div><!-- End of Chart title's settings -->
+        </div>
+
+
+        <div class="pull-right">
+          <a style="margin-bottom:10px" class="btn btn-xs btn-warning"
+            id= "btn_cancel_chart_settings">Cancel</a>
+          <a style="margin-bottom:10px;margin-left: 5px;" class="btn btn-xs btn-success"
+            id="btn_update_chart_settings">Save</a>
+        </div>
+      </div>
+    </div>
+  </div>  <!-- End of Chart settings popup -->
 </body>
 </html>
