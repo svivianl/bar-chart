@@ -13,7 +13,7 @@
 }
 
 .popupBoxContent{
-  background-color: #FFF; padding: 15px 15px 50px 15px;
+  background-color: rgb(240,240,240); padding: 15px 15px 50px 15px;
 }
 
 .hr.style {
@@ -24,7 +24,7 @@
 }
 
 body{
-  background-color: lightblue;
+  background-color: rgb(240,240,240);
 }
 
 .btn{
@@ -50,3 +50,17 @@ body{
 .btn-warning{
   background-color: rgb(255, 153, 51);
 }
+
+.title-label{
+  display: inline-block;
+  float: left;
+  clear: left;
+  width: 100px;
+  /*text-align: left;*/
+}
+
+.title-input{
+  display: inline-block;
+  float: left;
+}
+

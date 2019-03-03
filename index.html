@@ -36,33 +36,33 @@
           <div id="title_chart_settings">
             <form class="form-inline">
               <div class="form-group">
-                <label>Title</label>
-                <input id="title_chart" class="form-control" type="text" placeholder="Bar Chart" required="true">
+                <label class="title-label">Title</label>
+                <input id="title_chart" class="form-control title-input" type="text" placeholder="Bar Chart" required="true">
               </div>
             </form>
 
             <form class="form-inline">
               <div class="form-group">
-                <label>Font Size</label>
-                <input id="title_font_size" class="form-control" type="text" placeholder="50" required="true">
+                <label class="title-label">Font Size</label>
+                <input id="title_font_size" class="form-control title-input" type="text" placeholder="50" required="true" size="3">
                 <!-- dropbox with the UoM of the font size -->
-                <select id="select_title_font_size"></select>
+                <select id="select_title_font_size" class="title-input"></select>
               </div>
             </form>
 
             <form class="form-inline">
               <div class="form-group">
-                <label>Font Colour</label>
-                <div id="title_font_colour" class="colour-div">
+                <label class="colour-label" style="width: 100px;">Font Colour</label>
+                <div id="title_font_colour" class="colour-div" style="margin: 10px 5px 5px 0;">
                 </div>
-                <a style="margin-bottom:10px" class="btn btn-primary" id="btn_change_chart_title_colour">Change</a>
+                <a style="margin-bottom:10px" class="btn btn-primary title-input" id="btn_change_chart_title_colour">Change</a>
               </div>
             </form>
           </div><!-- End of Chart title's settings -->
         </div>
 
 
-        <div class="pull-right">
+        <div class="pull-right footer-popup">
           <a style="margin-bottom:10px" class="btn btn-xs btn-warning"
             id= "btn_cancel_chart_settings">Cancel</a>
           <a style="margin-bottom:10px;margin-left: 5px;" class="btn btn-xs btn-success"

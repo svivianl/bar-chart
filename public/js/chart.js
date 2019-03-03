@@ -14,7 +14,7 @@ class Chart{
     this.title = {
       title: 'Chart Title',
       fontSize: 'large',
-      fontColour: 'rgb(10,100,190)'
+      fontColour: 'rgb(0, 0, 100)'
     };
   }
 

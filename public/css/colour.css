@@ -1,10 +1,13 @@
 .colour-div{
-  float: left;
+  display: inline-block;
+  /*float: right; /*left;*/
   width: 60px;
   height: 20px;
   margin: 5px;
   border: 1px solid rgba(0, 0, 0, .2);
+  float: left;
 }
+
 .pixel-div{
   float: left;
   width: 20px;
@@ -12,9 +15,35 @@
   margin: 0;
   border: 1px solid rgba(0, 0, 0, .2);
 }
+
 .focus-div{
-  box-shadow: 0px 4px 3px rgba(0,0,0,0.4),
-              0px 8px 13px rgba(0,0,0,0.1),
-              0px 18px 23px rgba(0,0,0,0.1);
+  box-shadow: 0px 4px 3px rgba(250,250,250,0.4),
+              0px 8px 13px rgba(250,250,250,0.1),
+              0px 18px 23px rgba(250,250,250,0.1);
 }
 
+.colour-box{
+  width: 150px;
+
+}
+
+.popupBoxWrapperColour{
+  width: 210px; margin: 50px auto; text-align: left;
+}
+
+.footer-popup{
+  clear: both;
+}
+
+.selected-div{
+  height: 40px;
+  padding-top: 5px;
+}
+
+.colour-label{
+  display: inline-block;
+  float: left;
+  clear: left;
+  width: 50px;
+  margin-top: 10px;
+}

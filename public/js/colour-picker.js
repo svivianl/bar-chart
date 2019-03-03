@@ -28,7 +28,7 @@ class Colour{
 
     // creates popup
     $(father).append($('<div id="' + id + '" class="popupModal"></div>'));
-    $('#' + id).append($('<div id="' + id + '_popup" class="popupBoxWrapper"></div>'));
+    $('#' + id).append($('<div id="' + id + '_popup" class="popupBoxWrapperColour"></div>'));
     $('#' + id + '_popup').append($('<div id="' + id + '_append" class="popupBoxContent"></div>'));
     $('#' + id + '_append').append($('<h3>Colour Picker</h3>'));
     $('#' + id + '_append').append($('<hr class="hr-style">'));
@@ -44,11 +44,12 @@ class Colour{
 
     }.bind(this));
 
-    $('#' + id + '_append').append($('<div id="' + id + '_buttons"></div>'));
+    $('#' + id + '_append').append($('<div id="' + id + '_buttons" class="footer-popup"></div>'));
     //$('#' + id + '_append').append($('<div id="' + id + '_buttons" class="pull-right"></div>'));
     // colour selected field
-    $('#' + id + '_buttons').append($('<label>Colour: </label>'));
-    $('#' + id + '_buttons').append($('<div id="colour-selected" class="colour-div" style="background-color:' + this.elements[id].colour + ';"></div>'));
+    $('#' + id + '_buttons').append($('<div id="' + id + '_selected" class="selected-div"></div>'));
+    $('#' + id + '_selected').append($('<label class="colour-label">Colour: </label>'));
+    $('#' + id + '_selected').append($('<div id="colour-selected" class="colour-div" style="background-color:' + this.elements[id].colour + ';"></div>'));
     // buttons
     $('#' + id + '_buttons').append($('<a style="margin-bottom:10px" class="btn btn-xs btn-warning" id= "btn_cancel_' + id + '">Cancel</a>'));
     $('#' + id + '_buttons').append($('<a style="margin-bottom:10px;margin-left: 5px;" class="btn btn-xs btn-success" id="btn_update_' + id + '">Save</a>'));
@@ -65,10 +66,12 @@ class Colour{
 
   setSelected(id, colourIndex){
 
-    $('#' + this.rgb.indexOf(this.elements[id].selected)).removeClass('focus-div');
-
+    let oldColourIndex = this.rgb.indexOf(this.elements[id].selected);
+    $('#' + oldColourIndex).removeClass('focus-div');
+    //$('#' + oldColourIndex).css({width: '20px', height: '20px'});
     this.elements[id].selected = this.rgb[colourIndex];
     // focus DIV
+    //$('#' + colourIndex).css({width: '14px', height: '14px'});
     $('#' + colourIndex).addClass('focus-div');
     $('#colour-selected').css('background-color', this.elements[id].selected);
   }

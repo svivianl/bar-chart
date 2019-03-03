@@ -5,16 +5,18 @@ function toggleVisibility(id) {
 }
 
 function splitFontSize(options, fontSize){
-  let index = /^\d+/.test(fontSize);
+  let absolute = /^\d+/.test(fontSize);
   // options.absolute.indexOf(fontSize.substr(fontSize.length - 2, fontSize.length));
 
   // did not find the absolute UOM in the fontSize
-  //-1){
-  if(index === false){
+  if(absolute === false){
     return {relative: fontSize, absolute: ''};
   }else{
     //send the value of the fontSize and the UOM of the fontSize
-    return {relative: '', absolute: {value: fontSize.replace(options.relative[index], ''), uom: options.relative[index]}};
+    let splitFontSize = fontSize.replace(/(\d+)(\D+)/, "$1|$2");
+    splitFontSize = splitFontSize.split('|');
+    return {relative: '', absolute: {value: splitFontSize[0], uom: splitFontSize[1]}};
+    //return {relative: '', absolute: {value: fontSize.replace(options.relative[index], ''), uom: options.relative[index]}};
   }
 }
 
@@ -23,7 +25,7 @@ function setDropdowm(id, value, setValue){
   if(setValue === true){ $(id).text(value); }
 }
 
-function initiazlization(constants, fontSizes){
+function initialization(constants, fontSizes){
   // set font size dropbox
   fontSizes.absolute.forEach(size => {
     setDropdowm('#' + constants.dropbox, size, false);
@@ -42,13 +44,16 @@ function setChartSettings(constants, title, fontSizes){
   let newFontSize = splitFontSize(fontSizes, title.fontSize);
   let uom = '';
   if(newFontSize.relative !== ''){
+    uom = newFontSize.relative;
+    // hide input
+    $('#' + constants.fontSize).css('display', 'none');
+    // clear input
+    $('#' + constants.fontSize).val("");
+  }else{
     $('#' + constants.fontSize).attr("value", newFontSize.absolute.value);
     uom = newFontSize.absolute.uom;
-  }else{
-    uom = newFontSize.relative;
   }
-
-  $('#' + constants.dropbox).text(uom);
+  $('#' + constants.dropbox).val(uom);
   // set font size dropbox
   /*
   let setUOM = false;
@@ -125,7 +130,7 @@ $(document).ready(()=>{
   $('h1').text(chart.title.title);
   $('h1').css({"fontSize": chart.title.fontSize, "color": chart.title.fontColour});
 
-  initiazlization(elementsIds.chartSettings.changeTilte, fontSizes);
+  initialization(elementsIds.chartSettings.changeTilte, fontSizes);
 
   /*********************************** events ***************************************/
   // display Chart Settings popup
@@ -153,7 +158,11 @@ $(document).ready(()=>{
     let display = 'none';
 
     if(fontSizes.absolute.includes(select)){
-      display = 'block';
+      display = '';
+      //display = 'block';
+    }else{
+      // clear input
+      $('#' + elementsIds.chartSettings.changeTilte.fontSize).val("");
     }
 
     $('#' + elementsIds.chartSettings.changeTilte.fontSize).css('display', display);
