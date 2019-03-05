@@ -9,8 +9,12 @@ class Chart{
     this.chart = {
       height: {
         minValue: 0,
-        maxValue: 5,
+        maxValue: 0,
         scale: 1,
+        input: {
+          value: 0,
+          uom: 'px'
+        },
         max: {
           value: 800,
           uom: 'px'
@@ -18,7 +22,7 @@ class Chart{
       },
       width: {
         input: {
-          value: 800,
+          value: 0,
           uom: 'px'
         },
         max: {
@@ -40,12 +44,12 @@ class Chart{
 
     this.bar = {
       barColours: ["rgb(200, 0, 0)", "rgb(0, 200, 0)", "rgb(0, 0, 200)"],
-      barWidth: {
+      width: {
         value: 10,
         uom: '%'
       },
       labelColour: 'rgb(0, 0, 0)',
-      barSpacing: {
+      spacing: {
         value: 2,
         uom: 'px'
       },
@@ -73,7 +77,7 @@ class Chart{
   drawBarChart(data, options, element){
     if(element === '#chart'){
       this.data = data;
-      this.numberOfBars = this.data.length;
+      this.chart.numberOfBars = data.length;
 /*
       this.title.title = options.title;
       this.title.fontSize = this.getSplitSizes(options.titleFontSize);
@@ -83,8 +87,8 @@ class Chart{
       this.chart.width = options.width;
       this.chart.barColours = options.barColours;
       this.chart.labelColour = options.labelColour;
-      this.chart.barSpacing = this.getSplitSizes(options.barSpacing);
-      this.chart.barSpacing.value = this.chart.barSpacing.value / 2;
+      this.bar.spacing = this.getSplitSizes(options.barSpacing);
+      this.bar.spacing.value = this.bar.spacing.value / 2;
       this.chart.fontSize = this.getSplitSizes(options.fontSize);
       this.chart.positionOfValues = options.positionOfValues;
 */
@@ -94,24 +98,28 @@ class Chart{
       let minY = 0;
       let maxY = 0;
       data.forEach((dataAux, index) => {
-        //if(dataAux.length > this.numberOfBars){ this.numberOfBars = dataAux.length; }
-
-        for(let i = 0; i < dataAux.length; i++){
-          if(dataAux[i] < 0){
-            if(dataAux[i] < minY){ minY += dataAux[i]; }
+        if(Array.isArray(dataAux)){
+          for(let i = 0; i < dataAux.length; i++){
+            if(dataAux[i] < 0){
+              if(dataAux[i] < minY){ minY += dataAux[i]; }
+            }else{
+              if(dataAux[i] > maxY){ maxY += dataAux[i]; }
+            }
+          }
+        }else{
+          if(dataAux < 0){
+            if(dataAux < minY){ minY += dataAux; }
           }else{
-            if(dataAux[i] < maxY){ maxY += dataAux[i]; }
+            if(dataAux > maxY){ maxY += dataAux; }
           }
         }
       });
 
-      this.chart.height.min = minY;
-      this.chart.height.max = maxY;
-     // if((this.heigh.max - this.height.min) > )
-      //this.height.scale =
+      this.chart.height.minValue = minY;
+      this.chart.height.maxValue = maxY;
 
-
-      //this.width = ( ( 2 * this.numberOfBars - 1 ) * this.convert.x );
+      this.setHeightScale();
+      this.setBarWidth();
 
       return true;
 
@@ -135,19 +143,18 @@ class Chart{
   }
 
   getMeasure(){
+    // get the input height if there is any
+    let height = this.chart.height.max;
+    if(this.chart.height.input.value !== 0){ height = this.chart.height.input; }
+
+    // get the input width if there is any
+    let width = this.chart.width.max;
+    if(this.chart.width.input.value !== 0){ width = this.chart.width.input; }
+
     return {
-      height: this.height,
-      width: this.width
+      height: height,
+      width: width
     };
-  }
-
-  setBarWidth(screenWidth){
-    this.chart.barWidth.value = Math.trunc(screenWidth / (2 * this.numberOfBars - 1 ));
-    //this.barWidth = Math.round(screenWidth / ((1 + ( 2 * this.numberOfBars - 1 ) ) * this.convert.x));
-  }
-
-  getBarWidth(){
-    return this.barWidth;
   }
 
   getSplitSizes(value){
@@ -175,10 +182,10 @@ class Chart{
     // set Bar Chart
     $(`#${father}`).append($('<div id="bar_chart"></div>'));
     // set bars
-    let barSpacing = this.bar.barSpacing.value + this.bar.barSpacing.uom;
+    let barSpacing = this.bar.spacing.value + this.bar.spacing.uom;
     this.data.forEach((values, index) => {
       let bar = $('<div class="bar"></div>');
-      bar.css({'width': this.bar.barWidth.value + this.bar.barWidth.uom, 'margin-left': barSpacing, 'margin-right': barSpacing});
+      bar.css({'width': this.bar.width.value + this.bar.width.uom, 'margin-left': barSpacing, 'margin-right': barSpacing});
       $('#bar_chart').append(bar);
 
       // set values
@@ -200,8 +207,54 @@ class Chart{
     bar.append(div);
     div.append($(`<b>${value}</b>`));
     let backgroundColour = 'rgb(255, 255, 0, .25)';
-    if(this.bar.barColours[i] !== undefined){ backgroundColour = this.bar.barColours[i]; }
-    div.css({'background-color': backgroundColour, 'color': this.bar.labelColour});
+    if(this.bar.barColours[i] === undefined){ this.bar.backgroundColour = this.setColour(this.bar.barColours); }
+    backgroundColour = this.bar.barColours[i];
+    div.css({'height': Math.abs(value * this.chart.height.scale) + this.chart.height.input.uom, 'background-color': backgroundColour, 'color': this.bar.labelColour});
+  }
+
+  setHeightScale(){
+    // get the input height if there is any
+    let height = this.chart.height.max;
+    if(this.chart.height.input.value !== 0){ height = this.chart.height.input; }
+    // 0.05 (5%) of the height must be empty
+    let factor = 0.95;
+    // if we have negative values, 0.10 (10%) of the height must be empty
+    if(this.chart.height.min !== 0){ factor = 0.9; }
+    // this.height.maxValue - this.height.minValue = 100%
+    this.chart.height.scale = factor * height.value / (this.chart.height.maxValue - this.chart.height.minValue);
+  }
+
+  setBarWidth(){
+    // get the input width if there is any
+    let width = this.chart.width.max;
+    if(this.chart.width.input.value !== 0){ width = this.chart.width.input; }
+    this.bar.width.value = width.value / this.chart.numberOfBars - 2 * this.bar.spacing.value;
+    this.bar.width.uom = width.uom;
+  }
+
+  setColour(colours){
+    let colour = 'rgb(255, 255, 0, .25)';
+
+    do{
+      colour = this.randomColour();
+    }while(colours.includes(colour));
+
+    colours.push(colour);
+    return colours;
+  }
+
+  randomColour(){
+    // random goes from 0 to 1 and does not include 1
+    // use Math.floor to make the number withdout decimal
+
+    // get a "red" from 0 to 255
+    let r = Math.floor(Math.random() * 256);
+    // get a "green" from 0 to 255
+    let g = Math.floor(Math.random() * 256);
+    // get a "blue" from 0 to 255
+    let b = Math.floor(Math.random() * 256);
+
+    return "rgb(" + r + ", " + g + ", " + b + ")";
   }
 
 }
