@@ -1,24 +1,59 @@
+let elementsIds = {
+  chart: {
+    id: 'chart',
+    title: 'title_chart',
+    btnChartSettings: 'btn_chart_settings'
+  },
+  chartSettings: {
+    popup: 'popup_chart_settings',
+    changeTilte: {
+      title: 'title_chart_change',
+
+      fontSize: 'title_font_size',
+      dropbox: 'select_title_font_size',
+      fontColour: 'title_font_colour',
+      changeColour: 'btn_change_chart_title_colour',
+      colour: {
+        id: 'chart_title_colour',
+        pixel: 'pixel-div',
+        btnUpdate: 'btn_update_chart_title_colour',
+        btnCancel: 'btn_cancel_chart_title_colour'
+      }
+
+    },
+
+    btnUpdate: 'btn_update_chart_settings',
+    btnCancel: 'btn_cancel_chart_settings'
+  }
+};
+
+let chart = new Chart;
+
+
+
+function drawBarChart(data, options, element){
+  let message = chart.drawBarChart(data, options, element);
+  message !== true ? $('.container').css('display', '') : chart.createChart(elementsIds.chart.id);
+}
+
 // toggle popup's visibility
 function toggleVisibility(id) {
   let e = document.getElementById(id);
   e.style.display === 'block' ? e.style.display = 'none' : e.style.display = 'block';
 }
 
+/*
 function splitFontSize(options, fontSize){
   let absolute = /^\d+/.test(fontSize);
-  // options.absolute.indexOf(fontSize.substr(fontSize.length - 2, fontSize.length));
-
-  // did not find the absolute UOM in the fontSize
   if(absolute === false){
-    return {relative: fontSize, absolute: ''};
+    return { value: '', uom: fontSize};
   }else{
-    //send the value of the fontSize and the UOM of the fontSize
     let splitFontSize = fontSize.replace(/(\d+)(\D+)/, "$1|$2");
     splitFontSize = splitFontSize.split('|');
-    return {relative: '', absolute: {value: splitFontSize[0], uom: splitFontSize[1]}};
-    //return {relative: '', absolute: {value: fontSize.replace(options.relative[index], ''), uom: options.relative[index]}};
+    return { value: splitFontSize[0], uom: splitFontSize[1]};
   }
 }
+*/
 
 function setDropdowm(id, value, setValue){
   $(id).append($('<option value="' + value + '">' + value + '</option>'));
@@ -37,51 +72,38 @@ function initialization(constants, fontSizes){
 }
 
 // when displays popup
-function setChartSettings(constants, title, fontSizes){
+function setChartSettings(constants, chart, fontSizes){
   // set Title
+  let title = chart.getTitle();
   $('#' + constants.title).attr("value", title.title);
   $('#' + constants.fontColour).css("background-color", title.fontColour);
-  let newFontSize = splitFontSize(fontSizes, title.fontSize);
-  let uom = '';
-  if(newFontSize.relative !== ''){
-    uom = newFontSize.relative;
+  // let newFontSize = splitFontSize(fontSizes, title.fontSize);
+  if(title.fontSize.value === ''){
     // hide input
     $('#' + constants.fontSize).css('display', 'none');
     // clear input
     $('#' + constants.fontSize).val("");
   }else{
-    $('#' + constants.fontSize).attr("value", newFontSize.absolute.value);
-    uom = newFontSize.absolute.uom;
+    $('#' + constants.fontSize).attr("value", title.fontSize.value);
   }
-  $('#' + constants.dropbox).val(uom);
-  // set font size dropbox
-  /*
-  let setUOM = false;
-  fontSizes.absolute.forEach(size => {
-    if(uom === size){ setUOM = true; }
-    setDropdowm('#' + constants.dropbox, size, setUOM);
-    setUOM = false;
-  });
-  fontSizes.relative.forEach(size => {
-    if(uom === size){ setUOM = true; }
-    setDropdowm('#' + constants.dropbox, size, setUOM);
-    setUOM = false;
-  });
-  */
+  $('#' + constants.dropbox).val(title.fontSize.uom);
 }
 
 // when updates
-function setChartTitleSettings(constants, fontSizes){
+function setChartTitleSettings(chartConst, constants, fontSizes){
   let title = new Object;
   title.title = $('#' + constants.title).val();
-  let uom = $('#' + constants.dropbox).val();
-  if(!fontSizes.absolute.indexOf(uom)){ $('#' + constants.fontSize).attr("value", ''); }
-  title.fontSize = $('#' + constants.fontSize).val() + uom;
+  let fontSize = new Object;
+  fontSize.uom = $('#' + constants.dropbox).val();
+  if(!fontSizes.absolute.indexOf(fontSize.uom)){ $('#' + constants.fontSize).attr("value", ''); }
+  fontSize.value = $('#' + constants.fontSize).val();
+  title.fontSize = fontSize;
+  fontSize = title.fontSize.value + title.fontSize.uom;
   title.fontColour = $('#' + constants.fontColour).css( "background-color" );
 
   $('title').text(title.title);
-  $('h1').text(title.title);
-  $('h1').css({"fontSize": title.fontSize, "color": title.fontColour});
+  $(`#${chartConst.title}`).text(title.title);
+  $(`#${chartConst.title}`).css({"fontSize": fontSize, "color": title.fontColour});
 
   return title;
 }
@@ -93,56 +115,28 @@ $(document).ready(()=>{
     absolute: ['px', 'em', '%']
   };
 
-  let chart = new Chart;
   let colour = new Colour;
-
-  let elementsIds = {
-    chart: {
-      title: 'title_chart',
-      btnChartSettings: 'btn_chart_settings'
-    },
-    chartSettings: {
-      popup: 'popup_chart_settings',
-      changeTilte: {
-        title: 'title_chart',
-
-        fontSize: 'title_font_size',
-        dropbox: 'select_title_font_size',
-        fontColour: 'title_font_colour',
-        changeColour: 'btn_change_chart_title_colour',
-        colour: {
-          id: 'chart_title_colour',
-          pixel: 'pixel-div',
-          btnUpdate: 'btn_update_chart_title_colour',
-          btnCancel: 'btn_cancel_chart_title_colour'
-        }
-
-      },
-
-      btnUpdate: 'btn_update_chart_settings',
-      btnCancel: 'btn_cancel_chart_settings'
-    }
-  };
-
 
   // initial settings
   $('title').text(chart.title.title);
-  $('h1').text(chart.title.title);
-  $('h1').css({"fontSize": chart.title.fontSize, "color": chart.title.fontColour});
+  $(`#${elementsIds.chart.title}`).text(chart.title.title);
+  $(`#${elementsIds.chart.title}`).css({"fontSize": chart.title.fontSize.value + chart.title.fontSize.uom, "color": chart.title.fontColour});
 
   initialization(elementsIds.chartSettings.changeTilte, fontSizes);
+
+  //chart.setBarWidth($(elementsIds.chart.id).width());
 
   /*********************************** events ***************************************/
   // display Chart Settings popup
   $("#" + elementsIds.chart.btnChartSettings).on('click', () => {
-    setChartSettings(elementsIds.chartSettings.changeTilte, chart.getTitle(), fontSizes);
+    setChartSettings(elementsIds.chartSettings.changeTilte, chart, fontSizes);
     toggleVisibility(elementsIds.chartSettings.popup);
   });
 
   // update Chart Settings
   $("#" + elementsIds.chartSettings.btnUpdate).on('click', () => {
 
-    chart.setTitle(setChartTitleSettings(elementsIds.chartSettings.changeTilte, fontSizes));
+    chart.setTitle(setChartTitleSettings(elementsIds.chart, elementsIds.chartSettings.changeTilte, fontSizes));
     toggleVisibility(elementsIds.chartSettings.popup);
   });
 
@@ -203,6 +197,10 @@ $(document).ready(()=>{
     // remove popup
     colour.cancel(elementsIds.chartSettings.changeTilte.colour.id);
     colour.removePopup(elementsIds.chartSettings.changeTilte.colour.id);
+  });
+
+  $('body').on('click', () => {
+    $('.container').css('display', 'none');
   });
 });
 

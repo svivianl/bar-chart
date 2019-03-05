@@ -12,15 +12,20 @@
   crossorigin="anonymous"></script>
   <script type="text/javascript" src="./public/js/chart.js"></script>
   <script type="text/javascript" src="./public/js/colour-picker.js"></script>
-  <script type="text/javascript" src="./public/js/script.js"></script>
 
-  <title>Bar Chart</title>
+  <script type="text/javascript" src="./public/js/script.js"></script>
+  <meta charset="UTF-8">
+  <title></title>
 </head>
 <body>
+  <div class="container msg-container">
+    <div class="alert alert-danger"><p id="message"></p></div>
+  </div>
+
   <a style="margin-bottom:10px" class="btn btn-primary" id="btn_chart_settings">Chart Settings</a>
   <hr>
-  <h1>Bar Chart</h1>
-
+  <div id='chart'>
+  </div>
 
 
   <!-- Begin of Chart settings popup -->
@@ -37,7 +42,7 @@
             <form class="form-inline">
               <div class="form-group">
                 <label class="title-label">Title</label>
-                <input id="title_chart" class="form-control title-input" type="text" placeholder="Bar Chart" required="true">
+                <input id="title_chart_change" class="form-control title-input" type="text" placeholder="Bar Chart" required="true">
               </div>
             </form>
 
@@ -71,5 +76,7 @@
       </div>
     </div>
   </div>  <!-- End of Chart settings popup -->
+
+  <script type="text/javascript" src="./data/test.js"></script>
 </body>
 </html>

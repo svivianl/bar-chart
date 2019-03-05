@@ -1,3 +1,4 @@
+/* popup*/
 .popupModal{
   top: 0; left: 0; position: fixed; width: 100%; height: 120%;
   background-color: rgba(0,0,0,0.7); display: none;
@@ -16,17 +17,7 @@
   background-color: rgb(240,240,240); padding: 15px 15px 50px 15px;
 }
 
-.hr.style {
-  border: 0;
-  height: 1px;
-  background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
-  background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
-}
-
-body{
-  background-color: rgb(240,240,240);
-}
-
+/* buttons */
 .btn{
   display: inline-block;
   font-weight: 400;
@@ -51,12 +42,12 @@ body{
   background-color: rgb(255, 153, 51);
 }
 
+/* settings*/
 .title-label{
   display: inline-block;
   float: left;
   clear: left;
   width: 100px;
-  /*text-align: left;*/
 }
 
 .title-input{
@@ -64,3 +55,114 @@ body{
   float: left;
 }
 
+/* message*/
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-danger {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.msg-container {
+  z-index: 1;
+}
+
+.container{
+  display: none;
+}
+
+#title_chart{
+  text-align: center;
+}
+
+
+#chart{
+  display: inline-block;
+}
+
+/* Axis */
+#y_axis{
+  width: 800px;
+  /* rotate before setting position as relative */
+  transform: rotate(-90deg);
+  transform-origin: 100% bottom;
+  position: relative;
+  left: -750px;
+}
+
+#span_y_axis{
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  color: rgb(5, 5, 5);
+
+}
+
+#y_labels{
+  width: : 800px;
+  display: inline-block;
+  color: rgb(5, 5, 5);
+}
+
+.span_y_labels{
+  display: inline-block;
+  position: relative;
+  text-align: right;
+  color: rgb(5, 5, 5);
+}
+
+#x_axis{
+  max-width: 800px;
+  text-align: right;
+  color: rgb(5, 5, 5);
+}
+
+/* chart */
+#bar_chart{
+  display: inline-block;
+  width: 100%;
+  max-width: 800px;
+  height: 800px;
+  /*max-height: 800px;*/
+  background-color: rgb(205,205,205);
+  border-left: solid 2px rgb(5, 5, 5);
+  border-bottom: solid 2px rgb(5, 5, 5);
+  left: 100px;
+  position: relative;
+}
+
+/* bar */
+.bar{
+  width: 10%;
+  display: inline-block;
+  margin-left:5%;
+  margin-right:5%;
+  display: inline-block;
+  position: relative;
+  bottom: -710px;
+}
+
+.data{
+  float: left;
+  width: 100%;
+  position: relative;
+  text-align: center;
+}
+/* others */
+
+.hr.style {
+  border: 0;
+  height: 1px;
+  background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+}
+
+body{
+  background-color: rgb(240,240,240);
+}
