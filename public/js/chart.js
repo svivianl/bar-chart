@@ -16,7 +16,7 @@ class Chart{
           uom: 'px'
         },
         max: {
-          value: 800,
+          value: 400,
           uom: 'px'
         }
       },
@@ -26,7 +26,7 @@ class Chart{
           uom: 'px'
         },
         max: {
-          value: 800,
+          value: 400,
           uom: 'px'
         }
       },
@@ -46,7 +46,7 @@ class Chart{
       barColours: ["rgb(200, 0, 0)", "rgb(0, 200, 0)", "rgb(0, 0, 200)"],
       width: {
         value: 10,
-        uom: '%'
+        uom: 'px'
       },
       labelColour: 'rgb(0, 0, 0)',
       spacing: {
@@ -95,28 +95,24 @@ class Chart{
       //this.xAxis = options.xAxis
 
       // calc chart heigh and width
-      let minY = 0;
-      let maxY = 0;
       data.forEach((dataAux, index) => {
+
+        let minY = 0;
+        let maxY = 0;
+
         if(Array.isArray(dataAux)){
           for(let i = 0; i < dataAux.length; i++){
-            if(dataAux[i] < 0){
-              if(dataAux[i] < minY){ minY += dataAux[i]; }
-            }else{
-              if(dataAux[i] > maxY){ maxY += dataAux[i]; }
-            }
+            dataAux[i] < 0 ? minY += dataAux[i] : maxY += dataAux[i];
+            if(this.bar.barColours[i] === undefined){ this.bar.backgroundColour = this.setColour(this.bar.barColours); }
           }
         }else{
-          if(dataAux < 0){
-            if(dataAux < minY){ minY += dataAux; }
-          }else{
-            if(dataAux > maxY){ maxY += dataAux; }
-          }
+          dataAux < 0 ? minY += dataAux : maxY += dataAux;
+          if(this.bar.barColours[0] === undefined){ this.bar.backgroundColour = this.setColour(this.bar.barColours); }
         }
-      });
 
-      this.chart.height.minValue = minY;
-      this.chart.height.maxValue = maxY;
+        if(this.chart.height.minValue > minY){ this.chart.height.minValue = minY; }
+        if(this.chart.height.maxValue < maxY){ this.chart.height.maxValue = maxY; }
+      });
 
       this.setHeightScale();
       this.setBarWidth();
@@ -183,20 +179,35 @@ class Chart{
     $(`#${father}`).append($('<div id="bar_chart"></div>'));
     // set bars
     let barSpacing = this.bar.spacing.value + this.bar.spacing.uom;
+
+    let maxBarHeight = 0;
+
     this.data.forEach((values, index) => {
       let bar = $('<div class="bar"></div>');
       bar.css({'width': this.bar.width.value + this.bar.width.uom, 'margin-left': barSpacing, 'margin-right': barSpacing});
       $('#bar_chart').append(bar);
 
+      let barHeight = 0;
+
       // set values
       if(Array.isArray(values)){
         for(let i = values.length - 1; i >= 0; i--){
           this.createBar(bar, values[i], i);
+          barHeight += this.getValueHeight(values[i]);
         }
       }else{
         this.createBar(bar, values, 0);
+        barHeight += this.getValueHeight(values);
       }
+
+      if(maxBarHeight < barHeight){ maxBarHeight = barHeight; }
     });
+
+    // get the input height if there is any
+    let height = this.chart.height.max;
+    if(this.chart.height.input.value !== 0){ height = this.chart.height.input; }
+    // set the bars positions
+    $('.bar').css('bottom', (maxBarHeight - height.value) + height.uom);
 
     // set X-Axis
     $(`#${father}`).append($(`<div id="x_axis">${this.axis.xAxis.name}</div>`));
@@ -206,10 +217,9 @@ class Chart{
     let div = $('<div class="data"></div>');
     bar.append(div);
     div.append($(`<b>${value}</b>`));
-    let backgroundColour = 'rgb(255, 255, 0, .25)';
-    if(this.bar.barColours[i] === undefined){ this.bar.backgroundColour = this.setColour(this.bar.barColours); }
-    backgroundColour = this.bar.barColours[i];
-    div.css({'height': Math.abs(value * this.chart.height.scale) + this.chart.height.input.uom, 'background-color': backgroundColour, 'color': this.bar.labelColour});
+
+    let height = this.getValueHeight(value);
+    div.css({'height': height + this.chart.height.input.uom, 'background-color': this.bar.barColours[i], 'color': this.bar.labelColour});
   }
 
   setHeightScale(){
@@ -219,9 +229,13 @@ class Chart{
     // 0.05 (5%) of the height must be empty
     let factor = 0.95;
     // if we have negative values, 0.10 (10%) of the height must be empty
-    if(this.chart.height.min !== 0){ factor = 0.9; }
+    if(this.chart.height.minValue !== 0){ factor = 0.9; }
     // this.height.maxValue - this.height.minValue = 100%
     this.chart.height.scale = factor * height.value / (this.chart.height.maxValue - this.chart.height.minValue);
+  }
+
+  getValueHeight(value){
+    return Math.abs(value * this.chart.height.scale);
   }
 
   setBarWidth(){

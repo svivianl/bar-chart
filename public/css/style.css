@@ -88,12 +88,12 @@
 
 /* Axis */
 #y_axis{
-  width: 800px;
+  width: 400px;
   /* rotate before setting position as relative */
   transform: rotate(-90deg);
   transform-origin: 100% bottom;
   position: relative;
-  left: -750px;
+  left: -350px;
 }
 
 #span_y_axis{
@@ -105,7 +105,7 @@
 }
 
 #y_labels{
-  width: : 800px;
+  width: : 400px;
   display: inline-block;
   color: rgb(5, 5, 5);
 }
@@ -118,7 +118,7 @@
 }
 
 #x_axis{
-  max-width: 800px;
+  max-width: 400px;
   text-align: right;
   color: rgb(5, 5, 5);
 }
@@ -127,9 +127,9 @@
 #bar_chart{
   display: inline-block;
   width: 100%;
-  max-width: 800px;
-  height: 800px;
-  /*max-height: 800px;*/
+  max-width: 400px;
+  height: 400px;
+  /*max-height: 400px;*/
   background-color: rgb(205,205,205);
   border-left: solid 2px rgb(5, 5, 5);
   border-bottom: solid 2px rgb(5, 5, 5);
@@ -145,7 +145,7 @@
   margin-right:5%;
   display: inline-block;
   position: relative;
-  bottom: -710px;
+  /*bottom: -310px;*/
 }
 
 .data{
