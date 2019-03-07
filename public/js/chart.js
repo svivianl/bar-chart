@@ -57,12 +57,13 @@ class Chart{
         value: '',
         uom: 'small'
       },
-      positionOfValues: 'middle'
+      // positionOf Values can be center, bottom, top
+      positionOfValues: 'center'
     };
 
     this.axis = {
       xAxis: {
-        labels: [],
+        labels: ['label1', 'label2', 'label3'],
         name: 'xAxis',
         colour: 'rgb(0, 0, 100)'
       },
@@ -168,12 +169,21 @@ class Chart{
     // Set header
     $(`#${father}`).append($('<h1 id="title_chart"></h1>'));
 
+    let chartHeight = this.getChartHeight();
+    let chartWidth = this.getChartWidth();
+
+    $(`#${father}`).append($('<div id="chart_area"></div>'));
+
+    // set tick
+    this.setTick(chartHeight, chartWidth);
+
     // set Y-Axis
     $(`#${father}`).append($('<div id="y_axis"></div>'));
     $('#y_axis').append($(`<span id="span_y_axis">${this.axis.yAxis.name}</span>`));
+    $('#y_axis').css('color', this.axis.yAxis.colour);
     $('#y_axis').append($('<div id="y_labels"></div>'));
 
-    //$('#y_labels').append($(`<span id="span_y_axis">${this.chart.yAxis.name}</span>`));
+    this.setYLabel(chartHeight);
 
     // set Bar Chart
     $(`#${father}`).append($('<div id="bar_chart"></div>'));
@@ -203,29 +213,143 @@ class Chart{
       if(maxBarHeight < barHeight){ maxBarHeight = barHeight; }
     });
 
-    // get the input height if there is any
-    let height = this.chart.height.max;
-    if(this.chart.height.input.value !== 0){ height = this.chart.height.input; }
     // set the bars positions
-    $('.bar').css('bottom', (maxBarHeight - height.value) + height.uom);
+    $('.bar').css('bottom', (maxBarHeight - chartHeight.value) + chartHeight.uom);
 
     // set X-Axis
     $(`#${father}`).append($(`<div id="x_axis">${this.axis.xAxis.name}</div>`));
+    $('#x_axis').css('color', this.axis.xAxis.colour);
+    $(`#${father}`).append($('<div id="x_labels"></div>'));
+    this.axis.xAxis.labels.forEach(label => {
+      $('#x_labels').append(`<span class="span_x_labels">${label}</span>`);
+    });
+    let xMargin = this.bar.spacing.value + this.bar.spacing.uom;
+    $('.span_x_labels').css({'color': this.axis.xAxis.colour, 'width': this.bar.width.value + this.bar.width.uom, 'margin-left': xMargin, 'margin-right': xMargin});
   }
 
   createBar(bar, value, i){
     let div = $('<div class="data"></div>');
     bar.append(div);
-    div.append($(`<b>${value}</b>`));
 
     let height = this.getValueHeight(value);
+    let position = 0;
+
+    switch(this.bar.positionOfValues){
+    case 'center':
+      // 2 decimal places
+      if(height > 25){
+        position = 'top: ' + ( height / 2 ).toFixed(2) + this.chart.height.input.uom;
+      }
+      break;
+    case 'bottom':
+      position = 'bottom: 0';
+      break;
+    case 'top':
+      position = 'top: 0';
+      break;
+    }
+
+    div.append($(`<b style="${position}">${value}</b>`));
+
     div.css({'height': height + this.chart.height.input.uom, 'background-color': this.bar.barColours[i], 'color': this.bar.labelColour});
   }
 
-  setHeightScale(){
-    // get the input height if there is any
+  getConstHeight(chartHeight){
+    let constHeight = 0;
+    switch(chartHeight.uom){
+    case 'px':
+      constHeight = 50;
+      break;
+    case '%':
+      constHeight = 20;
+      break;
+    default:
+      constHeight = 50;
+      break;
+    }
+    return constHeight;
+  }
+
+  setTick(chartHeight, chartWidth){
+    let height = 0;
+    let constHeight = this.getConstHeight(chartHeight);
+
+    do{
+      let tick = $(`<div class="tick"></div>`);
+      $('#chart_area').append(tick);
+
+      let last = false;
+      let newHeight = height + constHeight;
+      if(newHeight >= chartHeight.value){
+        newHeight = chartHeight.value - height;
+        last = true;
+      }else{
+        newHeight = chartHeight.value;
+        height += constHeight;
+      }
+
+      $('.tick').css({height: newHeight + chartHeight.uom, width: chartWidth.value + chartWidth.uom, color: this.axis.yAxis.colour});
+
+      if(last){ break; }
+    }while(height < chartHeight.value);
+  }
+
+  setYLabel(chartHeight){
+    let height = 0;
+    let constHeight = this.getConstHeight(chartHeight);
+    let constValue = Math.round(this.getConstHeight(chartHeight) / this.chart.height.scale);
+    let value = 0;
+
+    do{
+      /*
+      let last = false;
+      let newHeight = height + constHeight;
+      if(newHeight >= chartHeight.value){
+        newHeight = chartHeight.value - height;
+        last = true;
+      }else{
+        height += constHeight;
+      }
+
+      value += constValue;
+
+      let tickLabel = $(`<span class="span_y_axis">${value}</span>`);
+      $('#y_labels').append(tickLabel);
+
+      $('.span_y_axis').css({width: newHeight + chartHeight.uom, color: this.axis.yAxis.colour});
+      if(last){ break; }
+      */
+
+      if(height + constHeight >= chartHeight.value){
+        break;
+      }
+      height += constHeight;
+      value += constValue;
+
+      let tickLabel = $(`<span class="span_y_axis">${value}</span>`);
+      $('#y_labels').append(tickLabel);
+
+      $('.span_y_axis').css({width: constHeight + chartHeight.uom, color: this.axis.yAxis.colour});
+
+
+    }while(height < chartHeight.value);
+  }
+
+  getChartHeight(){
     let height = this.chart.height.max;
     if(this.chart.height.input.value !== 0){ height = this.chart.height.input; }
+    return height;
+  }
+
+  getChartWidth(){
+    // get the input width if there is any
+    let width = this.chart.width.max;
+    if(this.chart.width.input.value !== 0){ width = this.chart.width.input; }
+    return width;
+  }
+
+  setHeightScale(){
+    let height = this.getChartHeight();
     // 0.05 (5%) of the height must be empty
     let factor = 0.95;
     // if we have negative values, 0.10 (10%) of the height must be empty
@@ -240,8 +364,7 @@ class Chart{
 
   setBarWidth(){
     // get the input width if there is any
-    let width = this.chart.width.max;
-    if(this.chart.width.input.value !== 0){ width = this.chart.width.input; }
+    let width = this. getChartWidth();
     this.bar.width.value = width.value / this.chart.numberOfBars - 2 * this.bar.spacing.value;
     this.bar.width.uom = width.uom;
   }

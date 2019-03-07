@@ -86,6 +86,19 @@
   display: inline-block;
 }
 
+#chart_area{
+  position: absolute;
+}
+
+.tick{
+  /*display: inline-block;*/
+  border-bottom: dashed 1px rgb(76, 73, 73);
+  /*background-color: rgb(205,205,205);*/
+  position: relative;
+  left: 100px;
+  bottom: -12px; /*-30px;*/
+}
+
 /* Axis */
 #y_axis{
   width: 400px;
@@ -96,12 +109,15 @@
   left: -350px;
 }
 
-#span_y_axis{
+.span_y_axis{
   display: inline-block;
   position: relative;
-  text-align: center;
+  text-align: right;
   color: rgb(5, 5, 5);
-
+  transform: rotate(90deg);
+  /*transform-origin: 100% bottom;*/
+  top: 30px; /* move to the right */
+  right: 12px;/*-30px; /* move to the top */
 }
 
 #y_labels{
@@ -121,6 +137,20 @@
   max-width: 400px;
   text-align: right;
   color: rgb(5, 5, 5);
+  position: relative;
+  left: 150px;
+}
+
+#x_labels{
+  position: relative;
+  left: 25px;
+}
+
+.span_x_labels{
+  display: inline-block;
+  transform: rotate(-90deg);
+  transform-origin: right top;
+  text-align: right;
 }
 
 /* chart */
@@ -130,7 +160,7 @@
   max-width: 400px;
   height: 400px;
   /*max-height: 400px;*/
-  background-color: rgb(205,205,205);
+  /*background-color: rgb(205,205,205);*/
   border-left: solid 2px rgb(5, 5, 5);
   border-bottom: solid 2px rgb(5, 5, 5);
   left: 100px;
@@ -153,6 +183,10 @@
   width: 100%;
   position: relative;
   text-align: center;
+}
+
+b{
+  position: relative;
 }
 /* others */
 
