@@ -33,7 +33,13 @@ let chart = new Chart;
 
 function drawBarChart(data, options, element){
   let message = chart.drawBarChart(data, options, element);
-  message !== true ? $('.container').css('display', '') : chart.createChart(elementsIds.chart.id);
+  //message !== true ? $('.container').css('display', '') : chart.createChart(elementsIds.chart.id);
+  if(message !== true){
+    $('.container').css('display', 'block');
+    $('#message').text(message);
+  }else{
+    chart.createChart(elementsIds.chart.id);
+  }
 }
 
 // toggle popup's visibility
@@ -41,19 +47,6 @@ function toggleVisibility(id) {
   let e = document.getElementById(id);
   e.style.display === 'block' ? e.style.display = 'none' : e.style.display = 'block';
 }
-
-/*
-function splitFontSize(options, fontSize){
-  let absolute = /^\d+/.test(fontSize);
-  if(absolute === false){
-    return { value: '', uom: fontSize};
-  }else{
-    let splitFontSize = fontSize.replace(/(\d+)(\D+)/, "$1|$2");
-    splitFontSize = splitFontSize.split('|');
-    return { value: splitFontSize[0], uom: splitFontSize[1]};
-  }
-}
-*/
 
 function setDropdowm(id, value, setValue){
   $(id).append($('<option value="' + value + '">' + value + '</option>'));

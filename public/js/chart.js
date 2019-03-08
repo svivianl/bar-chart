@@ -6,6 +6,15 @@ class Chart{
     // [column 1], [column 2], [column 3] ...
     this.data = [];
 
+    this.title = {
+      title: 'Chart Title',
+      fontSize: {
+        value: '',
+        uom: 'large'
+      },
+      fontColour: 'rgb(0, 0, 100)'
+    };
+
     this.chart = {
       height: {
         minValue: 0,
@@ -33,22 +42,14 @@ class Chart{
       numberOfBars: 0
     };
 
-    this.title = {
-      title: 'Chart Title',
-      fontSize: {
-        value: '',
-        uom: 'large'
-      },
-      fontColour: 'rgb(0, 0, 100)'
-    };
-
     this.bar = {
-      barColours: ["rgb(200, 0, 0)", "rgb(0, 200, 0)", "rgb(0, 0, 200)"],
+      barColours: [],
+      // if labelColours has 1 to n colours
+      labelColours: [],
       width: {
         value: 10,
         uom: 'px'
       },
-      labelColour: 'rgb(0, 0, 0)',
       spacing: {
         value: 2,
         uom: 'px'
@@ -63,37 +64,136 @@ class Chart{
 
     this.axis = {
       xAxis: {
-        labels: ['label1', 'label2', 'label3'],
+        labels: [],
         name: 'xAxis',
         colour: 'rgb(0, 0, 100)'
       },
       yAxis: {
-        labels: [],
+        //labels: [],
         name: 'yAxis',
         colour: 'rgb(0, 0, 100)'
       }
     };
+
+    // label: array of [colour, label]
+    this.labels = [];
   }
 
   drawBarChart(data, options, element){
     if(element === '#chart'){
-      this.data = data;
-      this.chart.numberOfBars = data.length;
-/*
-      this.title.title = options.title;
-      this.title.fontSize = this.getSplitSizes(options.titleFontSize);
-      this.title.fontColour = options.titleFontColour;
+      if(! Array.isArray(data)){
+        return "data must be an Array";
+      }
 
-      this.chart.height = options.height;
-      this.chart.width = options.width;
-      this.chart.barColours = options.barColours;
-      this.chart.labelColour = options.labelColour;
-      this.bar.spacing = this.getSplitSizes(options.barSpacing);
-      this.bar.spacing.value = this.bar.spacing.value / 2;
-      this.chart.fontSize = this.getSplitSizes(options.fontSize);
-      this.chart.positionOfValues = options.positionOfValues;
-*/
-      //this.xAxis = options.xAxis
+      if((! Array.isArray(data[0]) && isNaN(data[0]) ) || (Array.isArray(data[0]) && isNaN(data[0][0]))){
+        return "data must be an Array of numbers";
+      }
+
+      if(data.length === 0){
+        return "empty data";
+      }
+
+      // data
+      this.data = Array.from(data);
+      this.chart.numberOfBars = data.length;
+
+      // title
+      if(options.hasOwnProperty('title')){
+        this.title.title = options.title;
+      }
+      if(options.hasOwnProperty('titleFontSize')){
+        this.title.fontSize = Object.assign({}, this.getSplitSizes(options.titleFontSize));
+      }
+      if(options.hasOwnProperty('titleFontColour')){
+        this.title.fontColour = options.titleFontColour;
+      }
+
+      // height and width
+      if(options.hasOwnProperty('height')){
+        this.chart.height.input = Object.assign({}, this.getSplitSizes(options.height));
+      }
+      if(options.hasOwnProperty('width')){
+        this.chart.width.input = Object.assign({}, this.getSplitSizes(options.width));
+      }
+
+      // bar
+      if(options.hasOwnProperty('barColours')){
+        if(! Array.isArray(options.barColours)){
+          return "barColours must be an Array";
+        }
+
+        if(options.barColours.length === 0){
+          return "empty barColours";
+        }
+
+        this.bar.barColours = Array.from(options.barColours);
+      }
+
+      if(options.hasOwnProperty('barSpacing')){
+        this.bar.spacing = Object.assign({}, this.getSplitSizes(options.barSpacing));
+        this.bar.spacing.value = ( this.bar.spacing.value / 2 ).toFixed(2);
+      }
+      if(options.hasOwnProperty('barFontSize')){
+        this.chart.fontSize = Object.assign({}, this.getSplitSizes(options.barFontSize));
+      }
+      if(options.hasOwnProperty('positionOfValues')){
+        this.chart.positionOfValues = options.positionOfValues;
+      }
+
+      // axis
+      if(options.hasOwnProperty('xAxis')){
+        if(options.xAxis.hasOwnProperty('labels')){
+          if(Array.isArray(options.xAxis.labels)){
+            this.axis.xAxis.labels = Array.from(options.xAxis.labels);
+          }else{
+            return "x-axis labels must be an Array";
+          }
+        }
+        if(options.xAxis.hasOwnProperty('name')){
+          this.axis.xAxis.name = options.xAxis.name;
+        }
+        if(options.xAxis.hasOwnProperty('colour')){
+          this.axis.xAxis.colour = options.xAxis.colour;
+        }
+      }
+      if(options.hasOwnProperty('yAxis')){
+        if(options.yAxis.hasOwnProperty('name')){
+          this.axis.yAxis.name = options.yAxis.name;
+        }
+        if(options.yAxis.hasOwnProperty('colour')){
+          this.axis.yAxis.colour = options.yAxis.colour;
+        }
+      }
+
+      // labels
+      if(options.hasOwnProperty('labels')){
+        if(! Array.isArray(options.labels)){
+          return "labels must be an Array";
+        }
+
+        if(options.labels.length === 0){
+          return "empty labels";
+        }
+
+        if(! Array.isArray(options.labels[0])){
+          return "labels must be an Array";
+        }
+
+        if(options.labels[0].length < 2){
+          return "labels mus t be an array of arrays with colour and text";
+        }
+
+        this.labels = Array.from(options.labels);
+      }
+
+      ///////////////////// check uoms
+
+
+      ///check number of data and labels
+      if(this.data.length !== this.axis.xAxis.labels.length){
+        return "number of data must be the same as the number of X-Axis labels";
+      }
+
 
       // calc chart heigh and width
       data.forEach((dataAux, index) => {
@@ -161,6 +261,7 @@ class Chart{
     }else{
       let splitFontSize = value.replace(/(\d+)(\D+)/, "$1|$2");
       splitFontSize = splitFontSize.split('|');
+      if(splitFontSize[1] === ''){ splitFontSize[1] = 'px'; }
       return { value: splitFontSize[0], uom: splitFontSize[1]};
     }
   }
@@ -181,12 +282,14 @@ class Chart{
     $(`#${father}`).append($('<div id="y_axis"></div>'));
     $('#y_axis').append($(`<span id="span_y_axis">${this.axis.yAxis.name}</span>`));
     $('#y_axis').css('color', this.axis.yAxis.colour);
-    $('#y_axis').append($('<div id="y_labels"></div>'));
+    $('#y_axis').append($(`<div id="y_labels" style="left: ${"-" + chartHeight.value + chartHeight.uom};"></div>`));
 
     this.setYLabel(chartHeight);
 
     // set Bar Chart
     $(`#${father}`).append($('<div id="bar_chart"></div>'));
+    $('#bar_chart').css({"height": chartHeight.value + chartHeight.uom, "width": chartWidth.value + chartWidth.uom});
+
     // set bars
     let barSpacing = this.bar.spacing.value + this.bar.spacing.uom;
 
@@ -218,13 +321,23 @@ class Chart{
 
     // set X-Axis
     $(`#${father}`).append($(`<div id="x_axis">${this.axis.xAxis.name}</div>`));
-    $('#x_axis').css('color', this.axis.xAxis.colour);
+    $('#x_axis').css({'color': this.axis.xAxis.colour, 'left': Number(chartWidth.value) - 250 + chartHeight.uom});
     $(`#${father}`).append($('<div id="x_labels"></div>'));
     this.axis.xAxis.labels.forEach(label => {
       $('#x_labels').append(`<span class="span_x_labels">${label}</span>`);
     });
     let xMargin = this.bar.spacing.value + this.bar.spacing.uom;
     $('.span_x_labels').css({'color': this.axis.xAxis.colour, 'width': this.bar.width.value + this.bar.width.uom, 'margin-left': xMargin, 'margin-right': xMargin});
+
+    if(this.labels.length !== 0){
+      let value =
+      $(`#${father}`).append($(`<div id="labels" style="left: ${Number(chartWidth.value) + 200 + chartWidth.uom}; top: ${"-" + chartHeight.value + chartHeight.uom};"></div>`));
+      this.labels.forEach(label => {
+        $('#labels').append($(`<div id="${label[1]}" style="margin: 5px"></div>`));
+        $(`#${label[1]}`).append($(`<div class="pixel-div" style="background-color:${label[0]}; margin-right: 2px"></div>`));
+        $(`#${label[1]}`).append($(`<span>${label[1]}</span>`));
+      });
+    }
   }
 
   createBar(bar, value, i){

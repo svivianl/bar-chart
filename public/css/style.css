@@ -96,17 +96,19 @@
   /*background-color: rgb(205,205,205);*/
   position: relative;
   left: 100px;
-  bottom: -12px; /*-30px;*/
+  bottom: -15px;/* -12px; /*-30px;*/
 }
 
 /* Axis */
 #y_axis{
-  width: 400px;
+  /*width: 400px;
   /* rotate before setting position as relative */
-  transform: rotate(-90deg);
-  transform-origin: 100% bottom;
+  /*transform: rotate(-90deg);
+  transform-origin: 100% bottom; */
   position: relative;
-  left: -350px;
+  /*left: -350px;*/
+  top: 10px;
+  left: 50px;
 }
 
 .span_y_axis{
@@ -121,9 +123,13 @@
 }
 
 #y_labels{
-  width: : 400px;
+  /*width: 400px;*/
   display: inline-block;
   color: rgb(5, 5, 5);
+  transform: rotate(-90deg);
+  transform-origin: 100% bottom;
+  position: relative;
+  left: -400px;
 }
 
 .span_y_labels{
@@ -188,6 +194,14 @@
 b{
   position: relative;
 }
+
+/* labels */
+#labels{
+  position: relative;
+  display: inline-block;
+  border: solid 1px black;
+}
+
 /* others */
 
 .hr.style {
