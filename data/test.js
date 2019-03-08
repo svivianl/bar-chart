@@ -1,3 +1,4 @@
+/*
 const data = [
   // column 1
   [42, 30, 81, 23],
@@ -7,8 +8,10 @@ const data = [
   [27, 63, 57]
   // ...
 ];
+*/
 
-//const data = [42, 30, 81, 23];
+// each elemet is a column
+const data = [42, 30, 81];
 
 
 const options = {
@@ -25,10 +28,12 @@ const options = {
   fontSize: "15px",
   positionOfValues: "bottom",
   height: "400px",
-  width: "300px",
+  width: "400px",
+  //xAxis: { name: "Hobbies", labels: ["Play sports"]},
   xAxis: { name: "Hobbies", labels: ["Play sports", "Photography", "Go out with friends"]},
   yAxis: { name: "Values"},
-  labels: [["rgb(255, 0, 0)", "label1"], ["rgb(0, 255, 0)", "label2"], ["rgb(0, 0, 255)", "label3"]]
+  //labels: [["rgb(255, 0, 0)", "label1"]]
+  labels: [{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2"}, {colour: "rgb(0, 0, 255)", text: "label3"}]
 };
 
 const element = '#chart';

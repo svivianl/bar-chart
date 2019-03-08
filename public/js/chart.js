@@ -45,7 +45,7 @@ class Chart{
     this.bar = {
       barColours: [],
       // if labelColours has 1 to n colours
-      labelColours: [],
+      labelColour: 'rgb(0, 0, 0)',
       width: {
         value: 10,
         uom: 'px'
@@ -81,122 +81,26 @@ class Chart{
 
   drawBarChart(data, options, element){
     if(element === '#chart'){
-      if(! Array.isArray(data)){
-        return "data must be an Array";
+      let message = this.setDataProperties(data);
+      if(message !== true){
+        return message;
       }
 
-      if((! Array.isArray(data[0]) && isNaN(data[0]) ) || (Array.isArray(data[0]) && isNaN(data[0][0]))){
-        return "data must be an Array of numbers";
+      this.setTitleProperties(options);
+      this.setDimensions(options);
+      message = this.setBarProperties(options);
+      if(message !== true){
+        return message;
       }
 
-      if(data.length === 0){
-        return "empty data";
-      }
-
-      // data
-      this.data = Array.from(data);
-      this.chart.numberOfBars = data.length;
-
-      // title
-      if(options.hasOwnProperty('title')){
-        this.title.title = options.title;
-      }
-      if(options.hasOwnProperty('titleFontSize')){
-        this.title.fontSize = Object.assign({}, this.getSplitSizes(options.titleFontSize));
-      }
-      if(options.hasOwnProperty('titleFontColour')){
-        this.title.fontColour = options.titleFontColour;
-      }
-
-      // height and width
-      if(options.hasOwnProperty('height')){
-        this.chart.height.input = Object.assign({}, this.getSplitSizes(options.height));
-      }
-      if(options.hasOwnProperty('width')){
-        this.chart.width.input = Object.assign({}, this.getSplitSizes(options.width));
-      }
-
-      // bar
-      if(options.hasOwnProperty('barColours')){
-        if(! Array.isArray(options.barColours)){
-          return "barColours must be an Array";
-        }
-
-        if(options.barColours.length === 0){
-          return "empty barColours";
-        }
-
-        this.bar.barColours = Array.from(options.barColours);
-      }
-
-      if(options.hasOwnProperty('barSpacing')){
-        this.bar.spacing = Object.assign({}, this.getSplitSizes(options.barSpacing));
-        this.bar.spacing.value = ( this.bar.spacing.value / 2 ).toFixed(2);
-      }
-      if(options.hasOwnProperty('barFontSize')){
-        this.chart.fontSize = Object.assign({}, this.getSplitSizes(options.barFontSize));
-      }
-      if(options.hasOwnProperty('positionOfValues')){
-        this.chart.positionOfValues = options.positionOfValues;
-      }
-
-      // axis
-      if(options.hasOwnProperty('xAxis')){
-        if(options.xAxis.hasOwnProperty('labels')){
-          if(Array.isArray(options.xAxis.labels)){
-            this.axis.xAxis.labels = Array.from(options.xAxis.labels);
-          }else{
-            return "x-axis labels must be an Array";
-          }
-        }
-        if(options.xAxis.hasOwnProperty('name')){
-          this.axis.xAxis.name = options.xAxis.name;
-        }
-        if(options.xAxis.hasOwnProperty('colour')){
-          this.axis.xAxis.colour = options.xAxis.colour;
-        }
-      }
-      if(options.hasOwnProperty('yAxis')){
-        if(options.yAxis.hasOwnProperty('name')){
-          this.axis.yAxis.name = options.yAxis.name;
-        }
-        if(options.yAxis.hasOwnProperty('colour')){
-          this.axis.yAxis.colour = options.yAxis.colour;
-        }
-      }
-
-      // labels
-      if(options.hasOwnProperty('labels')){
-        if(! Array.isArray(options.labels)){
-          return "labels must be an Array";
-        }
-
-        if(options.labels.length === 0){
-          return "empty labels";
-        }
-
-        if(! Array.isArray(options.labels[0])){
-          return "labels must be an Array";
-        }
-
-        if(options.labels[0].length < 2){
-          return "labels mus t be an array of arrays with colour and text";
-        }
-
-        this.labels = Array.from(options.labels);
-      }
-
-      ///////////////////// check uoms
-
-
-      ///check number of data and labels
-      if(this.data.length !== this.axis.xAxis.labels.length){
-        return "number of data must be the same as the number of X-Axis labels";
+      message = this.setProperties(options);
+      if(message !== true){
+        return message;
       }
 
 
       // calc chart heigh and width
-      data.forEach((dataAux, index) => {
+      this.data.forEach((dataAux, index) => {
 
         let minY = 0;
         let maxY = 0;
@@ -223,6 +127,138 @@ class Chart{
     }else{
       return 'Element must be #chart';
     }
+  }
+
+  setDataProperties(data){
+    if(! Array.isArray(data)){
+      return "data must be an Array";
+    }
+
+    if((! Array.isArray(data[0]) && isNaN(data[0]) ) || (Array.isArray(data[0]) && isNaN(data[0][0]))){
+      return "data must be an Array of numbers";
+    }
+
+    if(data.length === 0){
+      return "empty data";
+    }
+
+    // data
+    this.data = Array.from(data);
+    this.chart.numberOfBars = data.length;
+
+    return true;
+  }
+
+  setTitleProperties(options){
+    // title
+    if(options.hasOwnProperty('title')){
+      this.title.title = options.title;
+    }
+    if(options.hasOwnProperty('titleFontSize')){
+      this.title.fontSize = Object.assign({}, this.getSplitSizes(options.titleFontSize));
+    }
+    if(options.hasOwnProperty('titleFontColour')){
+      this.title.fontColour = options.titleFontColour;
+    }
+  }
+
+  setDimensions(options){
+        // height and width
+    if(options.hasOwnProperty('height')){
+      this.chart.height.input = Object.assign({}, this.getSplitSizes(options.height));
+    }
+    if(options.hasOwnProperty('width')){
+      this.chart.width.input = Object.assign({}, this.getSplitSizes(options.width));
+    }
+  }
+
+  setBarProperties(options){
+    // bar
+    if(options.hasOwnProperty('barColours')){
+      if(! Array.isArray(options.barColours)){
+        return "barColours must be an Array";
+      }
+
+      if(options.barColours.length === 0){
+        return "empty barColours";
+      }
+
+      this.bar.barColours = Array.from(options.barColours);
+    }
+
+    if(options.hasOwnProperty('barSpacing')){
+      this.bar.spacing = Object.assign({}, this.getSplitSizes(options.barSpacing));
+      this.bar.spacing.value = ( this.bar.spacing.value / 2 ).toFixed(2);
+    }
+    if(options.hasOwnProperty('barFontSize')){
+      this.chart.fontSize = Object.assign({}, this.getSplitSizes(options.barFontSize));
+    }
+    if(options.hasOwnProperty('positionOfValues')){
+      this.chart.positionOfValues = options.positionOfValues;
+    }
+    return true;
+  }
+
+  setProperties(options){
+    // axis
+    if(options.hasOwnProperty('xAxis')){
+      if(options.xAxis.hasOwnProperty('labels')){
+        if(Array.isArray(options.xAxis.labels)){
+          this.axis.xAxis.labels = Array.from(options.xAxis.labels);
+        }else{
+          return "x-axis labels must be an Array";
+        }
+      }
+      if(options.xAxis.hasOwnProperty('name')){
+        this.axis.xAxis.name = options.xAxis.name;
+      }
+      if(options.xAxis.hasOwnProperty('colour')){
+        this.axis.xAxis.colour = options.xAxis.colour;
+      }
+    }
+    if(options.hasOwnProperty('yAxis')){
+      if(options.yAxis.hasOwnProperty('name')){
+        this.axis.yAxis.name = options.yAxis.name;
+      }
+      if(options.yAxis.hasOwnProperty('colour')){
+        this.axis.yAxis.colour = options.yAxis.colour;
+      }
+    }
+
+    // labels
+    if(options.hasOwnProperty('labels')){
+      if(! Array.isArray(options.labels)){
+        return "labels must be an Array";
+      }
+
+      if(options.labels.length === 0){
+        return "empty labels";
+      }
+
+      if(typeof options.labels[0] !== 'object'){
+        return "labels must be an Array of objects";
+      }
+
+      if(! options.labels[0].hasOwnProperty('colour')){
+        return "labels must be an array of objects with colour and text properties";
+      }
+      if(! options.labels[0].hasOwnProperty('text')){
+        return "labels must be an array of objects with colour and text properties";
+      }
+
+      this.labels = Array.from(options.labels);
+    }
+
+    ///////////////////// check uoms, they must be px
+
+
+    ///check number of data and labels
+    if(this.data.length !== this.axis.xAxis.labels.length){
+      return "number of data must be the same as the number of X-Axis labels";
+    }
+
+    return true;
+
   }
 
   getTitle(){
@@ -309,7 +345,7 @@ class Chart{
           barHeight += this.getValueHeight(values[i]);
         }
       }else{
-        this.createBar(bar, values, 0);
+        this.createBar(bar, values, index);
         barHeight += this.getValueHeight(values);
       }
 
@@ -327,15 +363,16 @@ class Chart{
       $('#x_labels').append(`<span class="span_x_labels">${label}</span>`);
     });
     let xMargin = this.bar.spacing.value + this.bar.spacing.uom;
+    //$('.span_x_labels').css({'color': this.axis.xAxis.colour, 'height': this.bar.width.value + this.bar.width.uom, 'margin-top': xMargin, 'margin-bottom': xMargin});
     $('.span_x_labels').css({'color': this.axis.xAxis.colour, 'width': this.bar.width.value + this.bar.width.uom, 'margin-left': xMargin, 'margin-right': xMargin});
 
+    // set
     if(this.labels.length !== 0){
-      let value =
       $(`#${father}`).append($(`<div id="labels" style="left: ${Number(chartWidth.value) + 200 + chartWidth.uom}; top: ${"-" + chartHeight.value + chartHeight.uom};"></div>`));
       this.labels.forEach(label => {
-        $('#labels').append($(`<div id="${label[1]}" style="margin: 5px"></div>`));
-        $(`#${label[1]}`).append($(`<div class="pixel-div" style="background-color:${label[0]}; margin-right: 2px"></div>`));
-        $(`#${label[1]}`).append($(`<span>${label[1]}</span>`));
+        $('#labels').append($(`<div id="${label.text}" style="margin: 5px"></div>`));
+        $(`#${label.text}`).append($(`<div class="pixel-div" style="background-color:${label.colour}; margin-right: 2px"></div>`));
+        $(`#${label.text}`).append($(`<span>${label.text}</span>`));
       });
     }
   }
@@ -362,9 +399,9 @@ class Chart{
       break;
     }
 
-    div.append($(`<b style="${position}">${value}</b>`));
+    div.append($(`<b style="${position}; color: ${this.bar.labelColour}">${value}</b>`));
 
-    div.css({'height': height + this.chart.height.input.uom, 'background-color': this.bar.barColours[i], 'color': this.bar.labelColour});
+    div.css({'height': height + this.chart.height.input.uom, 'background-color': this.bar.barColours[i]});
   }
 
   getConstHeight(chartHeight){
@@ -397,13 +434,16 @@ class Chart{
         newHeight = chartHeight.value - height;
         last = true;
       }else{
-        newHeight = chartHeight.value;
+        newHeight = constHeight.value;
         height += constHeight;
       }
 
       $('.tick').css({height: newHeight + chartHeight.uom, width: chartWidth.value + chartWidth.uom, color: this.axis.yAxis.colour});
 
-      if(last){ break; }
+      if(last){
+        tick.css('border-bottom', 'none');
+        break;
+      }
     }while(height < chartHeight.value);
   }
 

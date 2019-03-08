@@ -149,7 +149,7 @@
 
 #x_labels{
   position: relative;
-  left: 25px;
+  left: 50px; /*25px;*/
 }
 
 .span_x_labels{
