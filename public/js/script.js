@@ -40,12 +40,12 @@ function drawBarChart(data, options, element){
   if(message !== true){
     setMessage(message);
   }else{
-    chart.createChart(elementsIds.chart.id);
-    /*try{
+    //chart.createChart(elementsIds.chart.id);
+    try{
       chart.createChart(elementsIds.chart.id);
     }catch(e){
       setMessage(e.message);
-    }*/
+    }
   }
 }
 

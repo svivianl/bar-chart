@@ -151,8 +151,11 @@ class Chart{
 
     try{
       // calc chart heigh and width, set colour array, and check if data is an array of objects with all the properties
-      if(this.labels.group){
-        numOfValues += this.data.length;
+      //if(this.labels.group){
+      //  numOfValues += this.data.length;
+      //}
+      if(! (! this.labels.group && Array.isArray(this.data[0] ))){
+        numOfValues = this.data.length;
       }
 
       this.data.forEach((dataAux, index) => {
@@ -417,14 +420,14 @@ class Chart{
 
       // set values
       if(Array.isArray(values)){
-        numOfColours += values.length - 1;
+        numOfColours += values.length;
         let numOfColoursAux = numOfColours;
 
         for(let i = values.length - 1; i >= 0; i--){
           if(this.labels.group){
             this.createBar(bar, values[i], this.labels.data[0][i]);
           }else{
-            numOfColoursAux -= i;
+            numOfColoursAux --;
             // different colour per value
             this.createBar(bar, values[i], this.labels.data[numOfColoursAux]);
           }
@@ -432,11 +435,10 @@ class Chart{
         }
       }else{
         if(this.labels.group){
-          numOfColours = 0;
+          this.createBar(bar, values, this.labels.data[0][numOfColours]);
         }else{
-          numOfColours = index;
+          this.createBar(bar, values, this.labels.data[index]);
         }
-        this.createBar(bar, values, this.labels.data[numOfColours]);
         barHeight += this.getValueHeight(values);
       }
 
@@ -475,7 +477,9 @@ class Chart{
   createLabels(label, index){
     $('#labels').append($(`<div id="${index}" style="margin: 5px"></div>`));
     $(`#${index}`).css('background-color', label.colour);
-    $(`#${index}`).append($(`<span style="color: ${label.labelColour};">${label.text}</span>`));
+    let text = '';
+    if(label.hasOwnProperty('text')){ text = label.text; }
+    $(`#${index}`).append($(`<span style="color: ${label.labelColour};">${text}</span>`));
   }
 
   checkLabelProperties(label){
