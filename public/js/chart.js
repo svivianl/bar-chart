@@ -53,9 +53,6 @@ class Chart{
     };
 
     this.bar = {
-      barColours: [],
-      // if labelColours has 1 to n colours
-      //labelColour: [],
       width: {
         value: 10,
         uom: 'px'
@@ -151,9 +148,6 @@ class Chart{
 
     try{
       // calc chart heigh and width, set colour array, and check if data is an array of objects with all the properties
-      //if(this.labels.group){
-      //  numOfValues += this.data.length;
-      //}
       if(! (! this.labels.group && Array.isArray(this.data[0] ))){
         numOfValues = this.data.length;
       }
@@ -246,18 +240,6 @@ class Chart{
 
   setBarProperties(options){
     // bar
-    if(options.hasOwnProperty('barColours')){
-      if(! Array.isArray(options.barColours)){
-        return "barColours must be an Array";
-      }
-
-      if(options.barColours.length === 0){
-        return "empty barColours";
-      }
-
-      this.bar.barColours = Array.from(options.barColours);
-    }
-
     if(options.hasOwnProperty('barSpacing')){
       this.bar.spacing = Object.assign({}, this.getSplitSizes(options.barSpacing));
       if(! this.isUOMPx(this.bar.spacing.uom)){ return "barSpacing must be in 'px'" ; }
@@ -482,16 +464,24 @@ class Chart{
     $(`#${index}`).append($(`<span style="color: ${label.labelColour};">${text}</span>`));
   }
 
+  checkLabelHasColour(value){
+    this.labels.data.forEach((label, index) => {
+      if(Array.isArray(this.labels.data[index])){
+        this.labels.data[index].forEach((dataLabel, dataIndex) =>{
+          return dataLabel.hasOwnProperty('colour') && dataLabel['colour'] === value;
+        });
+      }else{
+        return label.hasOwnProperty('colour') && label['colour'] === value;
+      }
+    });
+  }
+
   checkLabelProperties(label){
     let newLabel = Object.assign({}, label);
 
     if(label.colour === '' || ! label.hasOwnProperty('colour')){
       let colour = this.setColour();
       label.colour === '' ? newLabel.colour = colour : newLabel['colour'] = colour;
-    }else{
-      if(! this.bar.barColours.includes(newLabel.colour)){
-        this.bar.barColours.push(newLabel.colour);
-      }
     }
 
     if(label.labelColour === '' || ! label.hasOwnProperty('labelColour')){
@@ -528,7 +518,6 @@ class Chart{
     div.append($(`<b style="${position}; color: ${label.labelColour}; font-size:${this.bar.fontSize}">${value}</b>`));
 
     div.css({'height': height + this.chart.height.input.uom, 'background-color': label.colour});
-    //div.css({'height': height + this.chart.height.input.uom, 'background-color': this.bar.barColours[i]});
   }
 
   getConstHeight(chartHeight){
@@ -636,23 +625,10 @@ class Chart{
 
     do{
       colour = this.randomColour();
-    }while(this.bar.barColours.includes(colour));
-
-    this.bar.barColours.push(colour);
+    }while(this.checkLabelHasColour(colour));
 
     return colour;
   }
-/*  setColour(colours){
-    let colour = 'rgb(255, 255, 0, .25)';
-
-    do{
-      colour = this.randomColour();
-    }while(colours.includes(colour));
-
-    colours.push(colour);
-    return colours;
-  }
-*/
 
   randomColour(){
     // random goes from 0 to 1 and does not include 1

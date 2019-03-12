@@ -1,4 +1,4 @@
-
+/*
 // data 1
 const data = [
   // column 1
@@ -9,11 +9,11 @@ const data = [
   [27, 63, 57]
   // ...
 ];
-
+*/
 
 // data 2
 // each elemet is a column
-//const data = [42, 30, 81];
+const data = [42, 30, 81];
 
 const options = {
   title: "Hobbies",
@@ -42,10 +42,10 @@ const options = {
   //
   //correct for data 1
   //labels: [[{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, {colour: "rgb(0, 0, 255)", text: "label3"}, {text: "label      4"}]]
-  labels: [{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, {colour: "rgb(0, 0, 255)", text: "label3"}, {text: "label      4"}, {text: "label5"}, {text: "label6", labelColour: "rgb(240, 240, 240)"}, {text: "label7"}, {text: "label      8"}, {text: "label9"}, {text: "label     10", labelColour: "rgb(40, 40, 40)"}, {text: "label11"}]
+  //labels: [{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, {colour: "rgb(0, 0, 255)", text: "label3"}, {text: "label      4"}, {text: "label5"}, {text: "label6", labelColour: "rgb(240, 240, 240)"}, {text: "label7"}, {text: "label      8"}, {text: "label9"}, {text: "label     10", labelColour: "rgb(40, 40, 40)"}, {text: "label11"}]
   // correct for data 2
   //labels: [[{colour: "rgb(255, 0, 0)", text: "label1"}]]
-  //labels: [{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, {colour: "rgb(0, 0, 255)", text: "label3"}]
+  labels: [{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, {colour: "rgb(0, 0, 255)", text: "label3"}]
   // error
   //labels: [{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, {colour: "rgb(0, 0, 255)", text: "label3"}, {text: "label      4"}]
   //
