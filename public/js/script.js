@@ -27,18 +27,25 @@ let elementsIds = {
   }
 };
 
+function setMessage(message){
+  $('.container').css('display', 'block');
+  $('#message').text(message);
+}
+
 let chart = new Chart;
-
-
 
 function drawBarChart(data, options, element){
   let message = chart.drawBarChart(data, options, element);
   //message !== true ? $('.container').css('display', '') : chart.createChart(elementsIds.chart.id);
   if(message !== true){
-    $('.container').css('display', 'block');
-    $('#message').text(message);
+    setMessage(message);
   }else{
     chart.createChart(elementsIds.chart.id);
+    /*try{
+      chart.createChart(elementsIds.chart.id);
+    }catch(e){
+      setMessage(e.message);
+    }*/
   }
 }
 

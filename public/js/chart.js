@@ -1,6 +1,16 @@
 class Chart{
 
   constructor(){
+    // begin of constants
+    this.positions = ['top', 'center', 'bottom'];
+    // end of constants
+
+    // begin of default data
+    this.default = {
+      barLabelColour: 'rgb(0, 0, 0)'
+    };
+    // end of default data
+
     // for data:
     // column 1, column 2, column 3 ...
     // [column 1], [column 2], [column 3] ...
@@ -45,7 +55,7 @@ class Chart{
     this.bar = {
       barColours: [],
       // if labelColours has 1 to n colours
-      labelColour: 'rgb(0, 0, 0)',
+      //labelColour: [],
       width: {
         value: 10,
         uom: 'px'
@@ -75,76 +85,132 @@ class Chart{
       }
     };
 
-    // label: array of [colour, label]
-    this.labels = [];
+    // label: array of [colour, text, labelColour]
+    this.labels = {
+      data: [],
+      group: false
+    };
   }
 
   drawBarChart(data, options, element){
     if(element === '#chart'){
-      let message = this.setDataProperties(data);
-      if(message !== true){
-        return message;
-      }
 
-      this.setTitleProperties(options);
-      this.setDimensions(options);
-      message = this.setBarProperties(options);
-      if(message !== true){
-        return message;
-      }
-
-      message = this.setProperties(options);
-      if(message !== true){
-        return message;
-      }
-
-
-      // calc chart heigh and width
-      this.data.forEach((dataAux, index) => {
-
-        let minY = 0;
-        let maxY = 0;
-
-        if(Array.isArray(dataAux)){
-          for(let i = 0; i < dataAux.length; i++){
-            dataAux[i] < 0 ? minY += dataAux[i] : maxY += dataAux[i];
-            if(this.bar.barColours[i] === undefined){ this.bar.backgroundColour = this.setColour(this.bar.barColours); }
-          }
-        }else{
-          dataAux < 0 ? minY += dataAux : maxY += dataAux;
-          if(this.bar.barColours[0] === undefined){ this.bar.backgroundColour = this.setColour(this.bar.barColours); }
+      try{
+        let message = this.setProperties(options);
+        if(message !== true){
+          return message;
         }
 
-        if(this.chart.height.minValue > minY){ this.chart.height.minValue = minY; }
-        if(this.chart.height.maxValue < maxY){ this.chart.height.maxValue = maxY; }
-      });
+        message = this.setDataProperties(data, options);
+        if(message !== true){
+          return message;
+        }
 
-      this.setHeightScale();
-      this.setBarWidth();
+        this.setTitleProperties(options);
+        message = this.setDimensions(options);
+        if(message !== true){
+          return message;
+        }
+        message = this.setBarProperties(options);
+        if(message !== true){
+          return message;
+        }
 
-      return true;
+        this.setHeightScale();
+        this.setBarWidth();
 
+        return true;
+
+      }catch(e){
+        return e.message;
+      }
     }else{
       return 'Element must be #chart';
     }
   }
 
-  setDataProperties(data){
+  setDataProperties(data, options){
     if(! Array.isArray(data)){
       return "data must be an Array";
     }
 
-    if((! Array.isArray(data[0]) && isNaN(data[0]) ) || (Array.isArray(data[0]) && isNaN(data[0][0]))){
-      return "data must be an Array of numbers";
+    if((! Array.isArray(data[0]) && isNaN(data[0]) ) || ((Array.isArray(data[0]) && isNaN(data[0][0])))){
+      return "data must be an Array of numbers or an array of numbers arrays";
     }
 
-    if(data.length === 0){
+    if((data.length === 0) || (Array.isArray(data[0]) && data[0].length === 0)){
       return "empty data";
     }
 
     // data
     this.data = Array.from(data);
     this.chart.numberOfBars = data.length;
+
+    let numOfValues = 0;
+    let maxNumOfValues = 0;
+
+    try{
+      // calc chart heigh and width, set colour array, and check if data is an array of objects with all the properties
+      if(this.labels.group){
+        numOfValues += this.data.length;
+      }
+
+      this.data.forEach((dataAux, index) => {
+
+        let minY = 0;
+        let maxY = 0;
+
+        if(Array.isArray(dataAux)){
+          if(this.labels.group){
+            if(numOfValues < dataAux.length){
+              numOfValues = dataAux.length;
+            }
+          }else{
+            numOfValues += dataAux.length;
+          }
+
+          for(let i = 0; i < dataAux.length; i++){
+            dataAux[i] < 0 ? minY += dataAux[i] : maxY += dataAux[i];
+          }
+        }else{
+          if(this.labels.group){
+            numOfValues = 1;
+          }
+          dataAux < 0 ? minY += dataAux : maxY += dataAux;
+        }
+
+        if(this.chart.height.minValue > minY){ this.chart.height.minValue = minY; }
+        if(this.chart.height.maxValue < maxY){ this.chart.height.maxValue = maxY; }
+      });
+
+      ///check number of data and labels
+      if(this.chart.numberOfBars !== this.axis.xAxis.labels.length){
+        return "number of columns must be the same as the number of X-Axis labels";
+      }
+
+      let numOfLabels = this.labels.data.length;
+      if(this.labels.group && Array.isArray(this.labels.data[0])){
+        numOfLabels = this.labels.data[0].length;
+      }
+
+      if(numOfValues !== numOfLabels){
+        return `you have ${numOfValues} values in the data structure and ${numOfLabels} in the opntions.labels structure`;
+      }
+
+      // set label properties
+      this.labels.data.forEach((data, index) => {
+        if(Array.isArray(this.labels.data[index])){
+          this.labels.data[index].forEach((dataLabel, dataIndex) =>{
+            this.labels.data[index][dataIndex] = this.checkLabelProperties(this.labels.data[0][dataIndex]);
+          });
+        }else{
+          this.labels.data[index] = this.checkLabelProperties(this.labels.data[index]);
+        }
+      });
+
+    }catch(e){
+      return e.message;
+    }
 
     return true;
   }
@@ -166,10 +232,13 @@ class Chart{
         // height and width
     if(options.hasOwnProperty('height')){
       this.chart.height.input = Object.assign({}, this.getSplitSizes(options.height));
+      if(! this.isUOMPx(this.chart.height.input.uom)){ return "Height must be in 'px'" ; }
     }
     if(options.hasOwnProperty('width')){
       this.chart.width.input = Object.assign({}, this.getSplitSizes(options.width));
+      if(! this.isUOMPx(this.chart.width.input.uom)){ return "Width must be in 'px'" ; }
     }
+    return true;
   }
 
   setBarProperties(options){
@@ -188,13 +257,22 @@ class Chart{
 
     if(options.hasOwnProperty('barSpacing')){
       this.bar.spacing = Object.assign({}, this.getSplitSizes(options.barSpacing));
+      if(! this.isUOMPx(this.bar.spacing.uom)){ return "barSpacing must be in 'px'" ; }
       this.bar.spacing.value = ( this.bar.spacing.value / 2 ).toFixed(2);
     }
     if(options.hasOwnProperty('barFontSize')){
-      this.chart.fontSize = Object.assign({}, this.getSplitSizes(options.barFontSize));
+      this.bar.fontSize = Object.assign({}, this.getSplitSizes(options.barFontSize));
+    }
+
+    if(options.hasOwnProperty('barLabelColour')){
+      this.bar.labelColour = options.barLabelColour;
     }
     if(options.hasOwnProperty('positionOfValues')){
-      this.chart.positionOfValues = options.positionOfValues;
+      if(this.positions.includes(options.positionOfValues)){
+        this.bar.positionOfValues = options.positionOfValues;
+      }else{
+        return "positionOfValues must be 'top' or 'center' or 'bottom'";
+      }
     }
     return true;
   }
@@ -235,26 +313,25 @@ class Chart{
         return "empty labels";
       }
 
-      if(typeof options.labels[0] !== 'object'){
-        return "labels must be an Array of objects";
+      if((! Array.isArray(options.labels[0]) && typeof options.labels[0] !== 'object') || ((Array.isArray(options.labels[0]) && typeof options.labels[0][0] !== 'object'))){
+        return "options.labels must be an Array of objects or an Array of objects array";
       }
 
-      if(! options.labels[0].hasOwnProperty('colour')){
-        return "labels must be an array of objects with colour and text properties";
-      }
-      if(! options.labels[0].hasOwnProperty('text')){
+      if((typeof options.labels[0] === 'object' && ( ! options.labels[0].hasOwnProperty('colour') || ! options.labels[0].hasOwnProperty('text'))) && ((Array.isArray(options.labels[0]) && (! options.labels[0][0].hasOwnProperty('colour') || ! options.labels[0][0].hasOwnProperty('text'))))){
         return "labels must be an array of objects with colour and text properties";
       }
 
-      this.labels = Array.from(options.labels);
-    }
+      if(Array.isArray(options.labels[0]) && options.labels.length !== 1){
+        return "for a group of colour, options.labels must be an array of objects array \n ex: [[object1, object...]] not [[object1, object...], [objectX, objectZ...]]";
+      }
 
-    ///////////////////// check uoms, they must be px
+      this.labels.data = Array.from(options.labels);
+      if(this.labels.data.length === 1){
+        this.labels.group = true;
+      }
 
-
-    ///check number of data and labels
-    if(this.data.length !== this.axis.xAxis.labels.length){
-      return "number of data must be the same as the number of X-Axis labels";
+    } else{
+      return "options must have property 'Labels'";
     }
 
     return true;
@@ -328,8 +405,8 @@ class Chart{
 
     // set bars
     let barSpacing = this.bar.spacing.value + this.bar.spacing.uom;
-
     let maxBarHeight = 0;
+    let numOfColours = 0;
 
     this.data.forEach((values, index) => {
       let bar = $('<div class="bar"></div>');
@@ -340,12 +417,26 @@ class Chart{
 
       // set values
       if(Array.isArray(values)){
+        numOfColours += values.length - 1;
+        let numOfColoursAux = numOfColours;
+
         for(let i = values.length - 1; i >= 0; i--){
-          this.createBar(bar, values[i], i);
+          if(this.labels.group){
+            this.createBar(bar, values[i], this.labels.data[0][i]);
+          }else{
+            numOfColoursAux -= i;
+            // different colour per value
+            this.createBar(bar, values[i], this.labels.data[numOfColoursAux]);
+          }
           barHeight += this.getValueHeight(values[i]);
         }
       }else{
-        this.createBar(bar, values, index);
+        if(this.labels.group){
+          numOfColours = 0;
+        }else{
+          numOfColours = index;
+        }
+        this.createBar(bar, values, this.labels.data[numOfColours]);
         barHeight += this.getValueHeight(values);
       }
 
@@ -366,42 +457,74 @@ class Chart{
     //$('.span_x_labels').css({'color': this.axis.xAxis.colour, 'height': this.bar.width.value + this.bar.width.uom, 'margin-top': xMargin, 'margin-bottom': xMargin});
     $('.span_x_labels').css({'color': this.axis.xAxis.colour, 'width': this.bar.width.value + this.bar.width.uom, 'margin-left': xMargin, 'margin-right': xMargin});
 
-    // set
-    if(this.labels.length !== 0){
+    // set labels
+    if(this.labels.data.length > 0){
       $(`#${father}`).append($(`<div id="labels" style="left: ${Number(chartWidth.value) + 200 + chartWidth.uom}; top: ${"-" + chartHeight.value + chartHeight.uom};"></div>`));
-      this.labels.forEach(label => {
-        $('#labels').append($(`<div id="${label.text}" style="margin: 5px"></div>`));
-        $(`#${label.text}`).append($(`<div class="pixel-div" style="background-color:${label.colour}; margin-right: 2px"></div>`));
-        $(`#${label.text}`).append($(`<span>${label.text}</span>`));
+      this.labels.data.forEach((label, index) => {
+        if(Array.isArray(this.labels.data[index])){
+          this.labels.data[index].forEach((dataLabel, dataIndex) =>{
+            this.createLabels(dataLabel, dataIndex);
+          });
+        }else{
+          this.createLabels(label, index);
+        }
       });
     }
   }
 
-  createBar(bar, value, i){
+  createLabels(label, index){
+    $('#labels').append($(`<div id="${index}" style="margin: 5px"></div>`));
+    $(`#${index}`).css('background-color', label.colour);
+    $(`#${index}`).append($(`<span style="color: ${label.labelColour};">${label.text}</span>`));
+  }
+
+  checkLabelProperties(label){
+    let newLabel = Object.assign({}, label);
+
+    if(label.colour === '' || ! label.hasOwnProperty('colour')){
+      let colour = this.setColour();
+      label.colour === '' ? newLabel.colour = colour : newLabel['colour'] = colour;
+    }else{
+      if(! this.bar.barColours.includes(newLabel.colour)){
+        this.bar.barColours.push(newLabel.colour);
+      }
+    }
+
+    if(label.labelColour === '' || ! label.hasOwnProperty('labelColour')){
+      label.labelColour === '' ? newLabel.labelColour = this.default.barLabelColour : newLabel['labelColour'] = this.default.barLabelColour;
+    }
+    return newLabel;
+  }
+
+  createBar(bar, value, label){
+  //createBar(bar, value, i, colour){
     let div = $('<div class="data"></div>');
     bar.append(div);
 
     let height = this.getValueHeight(value);
+    let chartHeight = this.getChartHeight();
     let position = 0;
+    let fontSize = 20;
 
     switch(this.bar.positionOfValues){
     case 'center':
       // 2 decimal places
       if(height > 25){
-        position = 'top: ' + ( height / 2 ).toFixed(2) + this.chart.height.input.uom;
+        position = 'top: ' + ( height / 2 ).toFixed(2) + chartHeight.uom;
       }
       break;
     case 'bottom':
-      position = 'bottom: 0';
+      position = 'bottom: ' + '-' + (height - fontSize) + chartHeight.uom;
       break;
     case 'top':
       position = 'top: 0';
       break;
     }
 
-    div.append($(`<b style="${position}; color: ${this.bar.labelColour}">${value}</b>`));
+    div.append($(`<b style="${position}; color: ${label.labelColour}; font-size:${this.bar.fontSize}">${value}</b>`));
 
-    div.css({'height': height + this.chart.height.input.uom, 'background-color': this.bar.barColours[i]});
+    div.css({'height': height + this.chart.height.input.uom, 'background-color': label.colour});
+    //div.css({'height': height + this.chart.height.input.uom, 'background-color': this.bar.barColours[i]});
   }
 
   getConstHeight(chartHeight){
@@ -454,24 +577,6 @@ class Chart{
     let value = 0;
 
     do{
-      /*
-      let last = false;
-      let newHeight = height + constHeight;
-      if(newHeight >= chartHeight.value){
-        newHeight = chartHeight.value - height;
-        last = true;
-      }else{
-        height += constHeight;
-      }
-
-      value += constValue;
-
-      let tickLabel = $(`<span class="span_y_axis">${value}</span>`);
-      $('#y_labels').append(tickLabel);
-
-      $('.span_y_axis').css({width: newHeight + chartHeight.uom, color: this.axis.yAxis.colour});
-      if(last){ break; }
-      */
 
       if(height + constHeight >= chartHeight.value){
         break;
@@ -522,7 +627,18 @@ class Chart{
     this.bar.width.uom = width.uom;
   }
 
-  setColour(colours){
+  setColour(){
+    let colour = 'rgb(255, 255, 0, .25)';
+
+    do{
+      colour = this.randomColour();
+    }while(this.bar.barColours.includes(colour));
+
+    this.bar.barColours.push(colour);
+
+    return colour;
+  }
+/*  setColour(colours){
     let colour = 'rgb(255, 255, 0, .25)';
 
     do{
@@ -532,6 +648,7 @@ class Chart{
     colours.push(colour);
     return colours;
   }
+*/
 
   randomColour(){
     // random goes from 0 to 1 and does not include 1
@@ -547,4 +664,7 @@ class Chart{
     return "rgb(" + r + ", " + g + ", " + b + ")";
   }
 
+  isUOMPx(uom){
+    if(uom === 'px'){ return true; } else { return false; }
+  }
 }
