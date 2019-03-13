@@ -31,50 +31,46 @@ By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`** 
   If you want a **basic** chart, **data** must be an array, i.e. `[42, 30, 81]`.
   If you want a **stacked** chart, **data** must be an array of arrays, where the inner array will have all the values the bar must have, i.e.
     `[
-      // column 1
-      [42, 30, 81, 23],
-      // column 2
-      [26, 59, 11, 77],
-      // column 3
-      [27, 63, 57]
-      // ...
+      [bar 1]
+      [bar 2],
+      [bar n],
     ]`
 
 **options**
   The height, width and font sizes, except the title's font size, must have 'px' as the unit of measure.
   
   **Title**
-    * title - type of string, default value *Chart Title*
-    * titleFontSize - type of string, default value *large*
-    * titleFontColour - type of string, default value *rgb(0, 0, 100)*
+* title - type of string, default value *Chart Title*
+* titleFontSize - type of string, default value *large*
+* titleFontColour - type of string, default value *rgb(0, 0, 100)*
 
     Can be customized through the Chart Settings modal popup.
 ![Image of Chart Settings](./data/chart-settings.png)
 
   **Bar**
-    * barSpacing - type of string, default value *4px*
-    * barFontSize - type of string, default value *15px*
-    * positionOfValues - type of string, default value *center*, must be *top*, *center* or *bottom*
+* barSpacing - type of string, default value *4px*
+* barFontSize - type of string, default value *15px*
+* positionOfValues - type of string, default value *center*, must be *top*, *center* or *bottom*
 
   **General**    
-    * height - type of string, default value *400px*
-    * width - type of string, default value *400px*
+* height - type of string, default value *400px*
+* width - type of string, default value *400px*
 
   **Axis**
-    * xAxis - Mandatory parameter, type of object
-      - name - type of string, default value *xAxis*
-      - labels - type of array , default value *15px*
-      - colour - type of string, default value *rgb(0, 0, 100)*
-    * yAxis - Mandatory paramenter, type of object
-      - name - type of string, default value *yAxis*
-      - colour - type of string, default value *rgb(0, 0, 100)*
+* xAxis - Mandatory parameter, type of object
+  - name - type of string, default value *xAxis*
+  - labels - type of array , default value *15px*
+  - colour - type of string, default value *rgb(0, 0, 100)*
+* yAxis - Mandatory paramenter, type of object
+  - name - type of string, default value *yAxis*
+  - colour - type of string, default value *rgb(0, 0, 100)*
 
   **Label**
-    * labels - Mandatory parameter, type of object
-      - colour - type of string
-      - text - type of string
-      - fontSize - type of string, default value *15px*
-      - labelColour - type of string, default value *rgb(0, 0, 0)*
+* labels - Mandatory parameter, type of object
+  - colour - type of string
+  - text - type of string
+  - fontSize - type of string, default value *15px*
+  - labelColour - type of string, default value *rgb(0, 0, 0)*
 
     If you want a to **group** the values by colour, **label** must be an array with only one inner array, where the inner array must have objects, i.e.
       `[
