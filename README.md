@@ -3,6 +3,7 @@
 ## About
 A customized bar chart created using HTML, CSS and jQuery.
 By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`** tags, as demonstrated in the image below, and by calling the function drawBarChart in the script, the bar chart is created.
+
 ![Image of Data Script](./data/data-script.png)
 
 ### Basic bar chart
