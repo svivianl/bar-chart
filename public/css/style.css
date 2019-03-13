@@ -144,7 +144,8 @@
   text-align: right;
   color: rgb(5, 5, 5);
   position: relative;
-  left: 1em; /*150px;*/
+  margin-left: 100px;
+  /*left: 1em; /*150px;*/
 }
 
 #x_labels{
@@ -154,9 +155,9 @@
 
 .span_x_labels{
   display: inline-block;
-  transform: rotate(-90deg);
+  /*transform: rotate(-90deg);
   transform-origin: right top;
-  text-align: right;
+  text-align: right;*/
 }
 
 /* chart */

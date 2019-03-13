@@ -94,7 +94,8 @@ class Chart{
   }
 
   drawBarChart(data, options, element){
-    if(element === '#chart'){
+    if(element !== ''){
+    //if(element === '#chart'){
 
       try{
         let message = this.setProperties(options);
@@ -125,8 +126,9 @@ class Chart{
       }catch(e){
         return e.message;
       }
+
     }else{
-      return 'Element must be #chart';
+      return 'Please pass an Element';
     }
   }
 
@@ -265,10 +267,11 @@ class Chart{
       this.bar.fontSize = Object.assign({}, this.getSplitSizes(options.barFontSize));
       if(! this.isUOMPx(this.bar.fontSize.uom)){ return "barFontSize must be in 'px'" ; }
     }
-
+/*
     if(options.hasOwnProperty('barLabelColour')){
       this.bar.labelColour = options.barLabelColour;
     }
+    */
     if(options.hasOwnProperty('positionOfValues')){
       if(this.positions.includes(options.positionOfValues)){
         this.bar.positionOfValues = options.positionOfValues;
@@ -295,7 +298,10 @@ class Chart{
       if(options.xAxis.hasOwnProperty('colour')){
         this.axis.xAxis.colour = options.xAxis.colour;
       }
+    }else{
+      return "xAxis is mandatory";
     }
+
     if(options.hasOwnProperty('yAxis')){
       if(options.yAxis.hasOwnProperty('name')){
         this.axis.yAxis.name = options.yAxis.name;
@@ -303,7 +309,10 @@ class Chart{
       if(options.yAxis.hasOwnProperty('colour')){
         this.axis.yAxis.colour = options.yAxis.colour;
       }
+    }else{
+      return "yAxis is mandatory";
     }
+
 
     // labels
     if(options.hasOwnProperty('labels')){
@@ -452,12 +461,16 @@ class Chart{
     $('#x_axis').css({'color': this.axis.xAxis.colour});
     //$('#x_axis').css({'color': this.axis.xAxis.colour, 'left': Number(chartWidth.value) - 250 + chartHeight.uom});
     $(`#${father}`).append($('<div id="x_labels"></div>'));
-    this.axis.xAxis.labels.forEach(label => {
-      $('#x_labels').append(`<span class="span_x_labels">${label}</span>`);
+    this.axis.xAxis.labels.forEach((label, index) => {
+      let span = $(`<span class="span_x_labels">${label}</span>`);
+      $('#x_labels').append(span);
+      let xMarginRight = this.bar.spacing.value + this.bar.spacing.uom;
+      let xMarginLeft = xMarginRight;
+      if(index === 0){
+        xMarginLeft = ( Number(this.bar.spacing.value) + 50) + this.bar.spacing.uom;
+      }
+      span.css({'color': this.axis.xAxis.colour, 'width': this.bar.width.value + this.bar.width.uom, 'margin-left': xMarginLeft, 'margin-right': xMarginRight});
     });
-    let xMargin = this.bar.spacing.value + this.bar.spacing.uom;
-    //$('.span_x_labels').css({'color': this.axis.xAxis.colour, 'height': this.bar.width.value + this.bar.width.uom, 'margin-top': xMargin, 'margin-bottom': xMargin});
-    $('.span_x_labels').css({'color': this.axis.xAxis.colour, 'width': this.bar.width.value + this.bar.width.uom, 'margin-left': xMargin, 'margin-right': xMargin});
 
     // set labels
     if(this.labels.data.length > 0){

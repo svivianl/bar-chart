@@ -21,13 +21,14 @@ const options = {
   xAxis: { name: "Hobbies", labels: ["Play sports", "Photography", "Go out with friends"], colour: "rgb(0, 150, 150)"},
   yAxis: { name: "Values", colour: "rgb(150, 0, 0)"},
   // correct for data 2
-  labels: [[{colour: "rgb(255, 0, 0)", text: "label1"}]]
-  //labels: [{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, {colour: "rgb(0, 0, 255)", text: "label3"}]
+  //labels: [[{colour: "rgb(255, 0, 0)", text: "label1"}]]
+  labels: [{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, {colour: "rgb(0, 0, 255)", text: "label3"}]
   // error
   //labels: [{colour: "rgb(255, 0, 0)", text: "label1"}, {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, {colour: "rgb(0, 0, 255)", text: "label3"}, {text: "label      4"}]
   //
 };
 
+//const element = 'body';
 const element = '#chart';
 
 drawBarChart(data, options, element);
