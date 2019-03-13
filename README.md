@@ -31,9 +31,9 @@ By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`** 
   If you want a **basic** chart, **data** must be an array, i.e. `[42, 30, 81]`.
   If you want a **stacked** chart, **data** must be an array of arrays, where the inner array will have all the values the bar must have, i.e.
     `[
-      [bar 1]
-      [bar 2],
-      [bar n],
+        [42, 30, 81, 23]
+        [26, 59, 11, 77],
+        [27, 63, 57]
     ]`
 
 **options**
