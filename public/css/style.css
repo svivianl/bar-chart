@@ -144,7 +144,7 @@
   text-align: right;
   color: rgb(5, 5, 5);
   position: relative;
-  left: 150px;
+  left: 1em; /*150px;*/
 }
 
 #x_labels{

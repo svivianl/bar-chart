@@ -7,7 +7,11 @@ class Chart{
 
     // begin of default data
     this.default = {
-      barLabelColour: 'rgb(0, 0, 0)'
+      barLabelColour: 'rgb(0, 0, 0)',
+      barFontSize: {
+        value: '15',
+        uom: 'px'
+      }
     };
     // end of default data
 
@@ -196,12 +200,24 @@ class Chart{
 
       // set label properties
       this.labels.data.forEach((data, index) => {
+        let propertiesObj = new Object;
+
         if(Array.isArray(this.labels.data[index])){
           this.labels.data[index].forEach((dataLabel, dataIndex) =>{
-            this.labels.data[index][dataIndex] = this.checkLabelProperties(this.labels.data[0][dataIndex]);
+            propertiesObj = this.checkLabelProperties(this.labels.data[0][dataIndex]);
+            if(propertiesObj.message !== 'ok'){
+              return propertiesObj.message;
+            }else{
+              this.labels.data[index][dataIndex]  = propertiesObj.label;
+            }
           });
         }else{
-          this.labels.data[index] = this.checkLabelProperties(this.labels.data[index]);
+          propertiesObj = this.checkLabelProperties(this.labels.data[index]);
+          if(propertiesObj.message !== 'ok'){
+            return propertiesObj.message;
+          }else{
+            this.labels.data[index] = propertiesObj.label;
+          }
         }
       });
 
@@ -247,6 +263,7 @@ class Chart{
     }
     if(options.hasOwnProperty('barFontSize')){
       this.bar.fontSize = Object.assign({}, this.getSplitSizes(options.barFontSize));
+      if(! this.isUOMPx(this.bar.fontSize.uom)){ return "barFontSize must be in 'px'" ; }
     }
 
     if(options.hasOwnProperty('barLabelColour')){
@@ -365,12 +382,12 @@ class Chart{
   }
 
   createChart(father){
-    // Set header
-    $(`#${father}`).append($('<h1 id="title_chart"></h1>'));
-
     let chartHeight = this.getChartHeight();
     let chartWidth = this.getChartWidth();
 
+    // Set header
+    $(`#${father}`).css('width', (Number(chartWidth.value) + 200) + chartWidth.uom);
+    $(`#${father}`).append($('<h1 id="title_chart"></h1>'));
     $(`#${father}`).append($('<div id="chart_area"></div>'));
 
     // set tick
@@ -432,7 +449,8 @@ class Chart{
 
     // set X-Axis
     $(`#${father}`).append($(`<div id="x_axis">${this.axis.xAxis.name}</div>`));
-    $('#x_axis').css({'color': this.axis.xAxis.colour, 'left': Number(chartWidth.value) - 250 + chartHeight.uom});
+    $('#x_axis').css({'color': this.axis.xAxis.colour});
+    //$('#x_axis').css({'color': this.axis.xAxis.colour, 'left': Number(chartWidth.value) - 250 + chartHeight.uom});
     $(`#${father}`).append($('<div id="x_labels"></div>'));
     this.axis.xAxis.labels.forEach(label => {
       $('#x_labels').append(`<span class="span_x_labels">${label}</span>`);
@@ -461,7 +479,9 @@ class Chart{
     $(`#${index}`).css('background-color', label.colour);
     let text = '';
     if(label.hasOwnProperty('text')){ text = label.text; }
-    $(`#${index}`).append($(`<span style="color: ${label.labelColour};">${text}</span>`));
+    let fontSize = this.default.barFontSize;
+    if(label.hasOwnProperty('fontSize')){ fontSize = label.fontSize; }
+    $(`#${index}`).append($(`<span style="color: ${label.labelColour}; font-size:${fontSize}">${text}</span>`));
   }
 
   checkLabelHasColour(value){
@@ -478,6 +498,7 @@ class Chart{
 
   checkLabelProperties(label){
     let newLabel = Object.assign({}, label);
+    let message = 'ok';
 
     if(label.colour === '' || ! label.hasOwnProperty('colour')){
       let colour = this.setColour();
@@ -487,7 +508,16 @@ class Chart{
     if(label.labelColour === '' || ! label.hasOwnProperty('labelColour')){
       label.labelColour === '' ? newLabel.labelColour = this.default.barLabelColour : newLabel['labelColour'] = this.default.barLabelColour;
     }
-    return newLabel;
+
+    if(label.hasOwnProperty('fontSize')){
+      label.fontSize = this.getSplitSizes(label.fontSize);
+      if(! this.isUOMPx(label.fontSize.uom)){ message = "label.fontSize must be in 'px'" ; }
+      if(label.fontSize.value !== ''){
+        newLabel.fontSize = this.default.barFontSize;
+      }
+    }
+
+    return {label: newLabel, message: message};
   }
 
   createBar(bar, value, label){
@@ -498,7 +528,9 @@ class Chart{
     let height = this.getValueHeight(value);
     let chartHeight = this.getChartHeight();
     let position = 0;
-    let fontSize = 20;
+    let fontSize = this.default.barFontSize;
+    if(this.bar.fontSize.value !== ''){ fontSize = this.bar.fontSize; }
+    if(label.hasOwnProperty('fontSize') && label.fontSize.value !== ''){ fontSize = label.fontSize; }
 
     switch(this.bar.positionOfValues){
     case 'center':
@@ -508,14 +540,14 @@ class Chart{
       }
       break;
     case 'bottom':
-      position = 'bottom: ' + '-' + (height - fontSize) + chartHeight.uom;
+      position = 'bottom: ' + '-' + (height - fontSize.value) + chartHeight.uom;
       break;
     case 'top':
       position = 'top: 0';
       break;
     }
 
-    div.append($(`<b style="${position}; color: ${label.labelColour}; font-size:${this.bar.fontSize}">${value}</b>`));
+    div.append($(`<b style="${position}; color: ${label.labelColour}; font-size:${fontSize.value + fontSize.uom}">${value}</b>`));
 
     div.css({'height': height + this.chart.height.input.uom, 'background-color': label.colour});
   }
@@ -610,7 +642,8 @@ class Chart{
   }
 
   getValueHeight(value){
-    return Math.abs(value * this.chart.height.scale);
+    return value * this.chart.height.scale;
+    //return Math.abs(value * this.chart.height.scale);
   }
 
   setBarWidth(){
