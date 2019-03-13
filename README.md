@@ -2,7 +2,7 @@
 
 ## About
 A customized bar chart created using HTML, CSS and jQuery.
-By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`**, as demonstrated in the image below, and by calling the function drawBarChart in the script, the bar chart is created. 
+By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`** tags, as demonstrated in the image below, and by calling the function drawBarChart in the script, the bar chart is created. 
 ![Image of Data Script](./data/data-script.png)
 
 ### Basic bar chart
@@ -28,9 +28,9 @@ By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`**,
 ### Parameters
 
 **data** - is a mandatory parameter
-  If you want a **basic** chart, **data** must be an array, i.e. [42, 30, 81].
+  If you want a **basic** chart, **data** must be an array, i.e. `[42, 30, 81]`.
   If you want a **stacked** chart, **data** must be an array of arrays, where the inner array will have all the values the bar must have, i.e.
-    [
+    `[
       // column 1
       [42, 30, 81, 23],
       // column 2
@@ -38,7 +38,7 @@ By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`**,
       // column 3
       [27, 63, 57]
       // ...
-    ]
+    ]`
 
 **options**
   The height, width and font sizes, except the title's font size, must have 'px' as the unit of measure.
@@ -49,7 +49,7 @@ By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`**,
     * titleFontColour - type of string, default value *rgb(0, 0, 100)*
 
     Can be customized through the Chart Settings modal popup.
-    ![Image of Chart Settings](./data/chart-settings.png)
+![Image of Chart Settings](./data/chart-settings.png)
 
   **Bar**
     * barSpacing - type of string, default value *4px*
@@ -77,19 +77,19 @@ By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`**,
       - labelColour - type of string, default value *rgb(0, 0, 0)*
 
     If you want a to **group** the values by colour, **label** must be an array with only one inner array, where the inner array must have objects, i.e.
-      [
+      `[
         [
           {colour: "rgb(255, 0, 0)", text: "label1"}, 
           {colour: "rgb(0, 255, 0)", text: "label2", labelColour: "rgb(240, 240, 240)"}, 
           {colour: "rgb(0, 0, 255)", text: "label3"}, 
           {text: "label      4", fontSize: '25px'}
         ]
-      ]
+      ]`
     If you want a **basic** chart, you the inner array must have only one objects.
     If you want a **stacked**, the number of objects must be the same max number of values stacked in a bar.
 
     If you want to **customize** the value with different colours, **label** must be an array of objects, i.e.
-      [
+      `[
         {colour: "rgb(255, 0, 0)", text: "label1"}, 
         {colour: "rgb(0, 255, 0)", text: "label2", 
         labelColour: "rgb(240, 240, 240)"}, 
@@ -101,9 +101,9 @@ By inserting the **`<file>.js`** between the **`</div>`** and the **`</body>`**,
         {text: "label9"}, 
         {text: "label     10", labelColour: "rgb(40, 40, 40)"}, 
         {text: "label11"}
-      ]
-      The number of objects must be the same number of values passed on the data parameter
-.
+      ]`
+      The number of objects must be the same number of values passed on the data parameter.
+
 **element**
   Type of string and is the jQuery element that the chart will get rendered into.
 
@@ -118,7 +118,7 @@ In case of any errors occurs, a message will be displayed, as illustrated in the
 ## Features
 * Fix issues/bugs
 * Insert more options at Chart Settings modal popup
-* Let the user insert a Unit of Mesure different than 'px'
+* Let the user insert a Unit of Measure different than 'px'
 
 ## External Resources
 * [API jQuery](https://api.jquery.com/)
